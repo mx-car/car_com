@@ -1,4 +1,4 @@
 
 
-add_executable(serial_arduino_demo main_serial_arduino_demo.cpp)
-target_link_libraries(serial_arduino_demo mx_serial_arduino ${Boost_LIBRARIES})
+add_executable(serial_demo main_serial_demo.cpp)
+target_link_libraries(serial_demo mx_serial ${Boost_LIBRARIES})
