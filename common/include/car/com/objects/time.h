@@ -37,12 +37,11 @@ public:
         return !((sec == 0) && (nsec == 0));
     }
     void now(){
+#if defined(__amd64__)
+#else
         sec = OFFSET.sec;
         nsec = OFFSET.sec;
         add(millis());
-#if defined(__amd64__)
-#else
-
 #endif
     }
     
