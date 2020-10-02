@@ -19,7 +19,8 @@
         ],
         "srcFilter": [
             "+<common/src/car/com/*.cpp>",
-            "+<common/src/car/com/objects/*.cpp>"
+            "+<common/src/car/com/objects/*.cpp>",
+            "+<common/src/car/com/mc/*.cpp>"
         ]
     },
     "frameworks": "*",

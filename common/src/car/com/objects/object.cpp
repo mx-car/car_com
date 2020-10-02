@@ -5,6 +5,7 @@
 
 using namespace car::com::objects;
 
+Time Time::OFFSET ( 0,0 );
 
 
 ObjectHeader::ObjectHeader()
