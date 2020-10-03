@@ -52,10 +52,6 @@ public:
     bool push_sync () ;
     car::com::objects::Object &pop_object ( car::com::objects::Object &object ) ;
     Message &push_object ( const car::com::objects::Object &object );
-#if defined(__amd64__)
-    
-    
-#endif
 };
 
 

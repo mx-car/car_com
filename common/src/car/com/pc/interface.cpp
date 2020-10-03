@@ -10,6 +10,7 @@ SerialInterface::SerialInterface()
     : serial_timeout_ ( NULL ) {
 };
 SerialInterface::~SerialInterface() {
+    if(serial_timeout_) free(serial_timeout_);
 };
 
 void SerialInterface::close() {
@@ -21,7 +22,6 @@ void SerialInterface::close() {
         }
     }
     serial_monitor_thread_.join();
-
 }
 
 void SerialInterface::serial_monitor ( const std::string& devname, unsigned int baud_rate ) {

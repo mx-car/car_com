@@ -16,9 +16,12 @@ namespace car {
   namespace com {
     namespace pc {
 
+/**
+ * Uart paramerer
+ **/
 struct Parameters {
-    std::string port;
-    int baudrate;
+    std::string port;   /// port name such as /dev/ttyACM0
+    int baudrate;       /// baudrate such as 115200
 };
 
 
@@ -28,7 +31,6 @@ class SerialInterface {
     Message msg_rx_;
     Objects obj_rx_;
     std::mutex mutex_obj_tx_;
-
     std::function<void (Message &,  Objects &)> callback;
     void serial_monitor ( const std::string& devname, unsigned int baud_rate );
     std::thread serial_monitor_thread_;
