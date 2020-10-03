@@ -84,7 +84,7 @@ int main ( int argc, char* argv[] ) {
         serial_arduino.addObject(o);
     }
     while ( gSignalStatus == 0 ) {
-        sleep ( 8 );
+        sleep ( 1 );
     }
     
     {

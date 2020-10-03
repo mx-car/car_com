@@ -26,7 +26,7 @@ public:
     MessageHeader ( uint16_t size, uint32_t seq, const objects::Time &stamp );
     uint16_t size;                       /// total message size if size
     uint32_t seq;                        /// consecutively increasing ID
-    objects::Time stamp;       /// time since epoch
+    objects::Time stamp;                 /// time since epoch
     void zeros();
     objects::Time &time();
     const objects::Time &time() const;

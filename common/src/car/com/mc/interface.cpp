@@ -57,7 +57,8 @@ int8_t Interface::readByte(uint8_t* bt) {
 int Interface::send () {
     int total = 0;
     if ( Serial ) {
-	this->seq = tx_count;
+        time().now();
+	    this->seq = tx_count;
         serialbuffer_used = 0;
         char *c = ( char * ) this;
         serialbuffer[serialbuffer_used++] = 0x00;  // Start Delimiter
@@ -139,8 +140,14 @@ void Interface::try_sync() {
         if ( receive() ) {      /// check for messages
             while ( this->pop_object ( object ).isValid() ) {
                 if ( object.type == car::com::objects::TYPE_SYNC ) {
-                    object.get(car::com::objects::Time::offest());
-                    car::com::objects::Time::offest().add(-millis());
+                    car::com::objects::Time::compute_offset(time());
+                    /*
+                    car::com::objects::Time::offest() = time();
+                    auto t = car::com::objects::TimePoint{};  /// epoch
+                    //t = t + std::chrono::seconds(time().sec) + std::chrono::nanoseconds(time().nsec) - std::chrono::milliseconds(millis());
+                    t = t + std::chrono::seconds(time().sec) + std::chrono::nanoseconds(time().nsec) - std::chrono::microseconds(micros()); 
+                    car::com::objects::Time::offest().from(t);
+                    */
                 }
             }
         }
