@@ -40,6 +40,9 @@ public:
     int size() {
         return strlen ( txt );
     }
+    bool empty() {
+        return (strlen ( txt ) == 0);
+    }
     
 #if defined(__amd64__)
     friend std::ostream &operator << ( std::ostream &os, const Text &o ) {

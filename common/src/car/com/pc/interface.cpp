@@ -7,11 +7,16 @@
 using namespace car::com::pc;
 
 SerialInterface::SerialInterface()
-    : serial_timeout_ ( NULL ) {
+    : serial_timeout_ ( NULL ), print_info(true), print_debug(true) {
 };
 SerialInterface::~SerialInterface() {
     if(serial_timeout_) free(serial_timeout_);
 };
+
+void SerialInterface::print(bool info, bool debug){
+    print_info = info;
+    print_debug = debug;
+}
 
 void SerialInterface::close() {
     loop = false;
@@ -28,7 +33,7 @@ void SerialInterface::serial_monitor ( const std::string& devname, unsigned int 
     loop = true;
     while ( loop ) {
         try {
-            std::cout << "try: " << devname << "@" << baud_rate << "bit/sec" << std::endl;
+            if(print_info) std::cout << "try: " << devname << "@" << baud_rate << "bit/sec" << std::endl;
             serial_timeout_ = new TimeoutSerial ( devname,  baud_rate );
             serial_timeout_->setTimeout ( boost::posix_time::seconds ( 3 ) );
             int i = 0;
@@ -45,7 +50,7 @@ void SerialInterface::serial_monitor ( const std::string& devname, unsigned int 
                     while ( msg_rx_.pop_object ( object ).isValid() ) {
                         switch ( object.type ) {
                         case car::com::objects::TYPE_SYNC_REQUEST:
-                            std::cout << "Sync request" << std::endl;
+                            if(print_info) std::cout << "Sync request" << std::endl;
                             addObject ( car::com::objects::Object ( car::com::objects::TYPE_SYNC ) );
                             break;
                         default:

@@ -35,9 +35,12 @@ class SerialInterface {
     void serial_monitor ( const std::string& devname, unsigned int baud_rate );
     std::thread serial_monitor_thread_;
     TimeoutSerial *serial_timeout_;
+    bool print_info;
+    bool print_debug;
 public:
     SerialInterface();
     ~SerialInterface();
+    void print(bool info, bool debug);
     void init ( const Parameters &param, std::function<void (Message &,  Objects &)> callback_fnc);
     void close();
     bool loop;

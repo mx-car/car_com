@@ -5,6 +5,7 @@
 #include <car/com/objects/pose.h>
 #include <car/com/objects/text.h>
 #include <car/com/objects/actuators.h>
+#include <car/com/objects/state.h>
 #include <car/com/objects/cmdraw.h>
 #include <cstdio>
 
@@ -37,6 +38,8 @@ static const uint16_t TYPE_COMMAND_ACKERMANN = 5020;
 static const uint16_t TYPE_COMMAND_MOTOR_PID = 5030;
 static const uint16_t TYPE_COMMAND_SERVO_PID = 5040;
 static const uint16_t TYPE_COMMAND_ACKERMANN_CONFIG = 5050;
+
+static const uint16_t TYPE_STATE_RAW = 6000;
 static const uint16_t TYPE_COMMAND_RAW = 6010;
 
 typedef uint16_t ObjectType;
