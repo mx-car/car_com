@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
-project(CarCom)
+project(CarCom )
 set(CARCOM_MAJOR_VERSION 0)
 set(CARCOM_MINOR_VERSION 1)
 set(CARCOM_PATCH_VERSION 0)
@@ -37,7 +37,7 @@ add_subdirectory(common)
 # ===============================
 
 # Add all targets to the build-tree export set
-export(TARGETS car_com car_com_interface
+export(TARGETS car_com demo_car_com
   FILE "${PROJECT_BINARY_DIR}/CarComTargets.cmake")
 
 # Export the package for use from the build-tree

@@ -9,11 +9,11 @@ get_filename_component(CARCOM_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 set(CARCOM_INCLUDE_DIRS "@CONF_INCLUDE_DIRS@")
 
 # Our library dependencies (contains definitions for IMPORTED targets)
-if(NOT TARGET car_com car_com_interface AND NOT CarCom_BINARY_DIR)
+if(NOT TARGET car_com AND NOT CarCom_BINARY_DIR)
   include("${CARCOM_CMAKE_DIR}/CarComTargets.cmake")
 endif()
 
 # These are IMPORTED targets created by CarComTargets.cmake
-set(CARCOM_LIBRARIES car_com car_com_interface)
+set(CARCOM_LIBRARIES car_com)
 set(CARCOM_EXECUTABLE car_com_demo)
 
