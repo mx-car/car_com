@@ -2,10 +2,10 @@
 #define CAR_COM_OBJECTS_TIME_H
 
 #include <cstdint>
-#include <chrono>
 
 #if defined(__amd64__)
 #include <iostream>
+#include <chrono>
 #else
 #include <Arduino.h>
 #endif
@@ -16,8 +16,10 @@ namespace com {
 namespace objects {
 
 
+#if defined(__amd64__)
 using Clock = std::chrono::high_resolution_clock;
 using TimePoint = std::chrono::time_point<Clock>;
+#endif
 
 class  Time {
 private:
@@ -28,6 +30,9 @@ public:
     Time ( int32_t sec, int32_t nsec )  :sec ( sec ), nsec ( nsec ) {};
     int32_t sec;      /// seconds (stamp_secs) since epoch
     int32_t nsec;     /// nanoseconds = 0.000000001 sec since stamp_secsf
+    void nomralize() {
+        sec += nsec % 1000000000UL;
+    }
     void add_milliseconds(int64_t millisecond) {
         int64_t dsec = ( millisecond / 1000 ) + sec;
         int64_t dnsec = ( millisecond % 1000UL ) * 1000000UL + nsec;
@@ -46,6 +51,7 @@ public:
     bool isSet() const {
         return !((sec == 0) && (nsec == 0));
     }
+#if defined(__amd64__)
     void from(const TimePoint &src){
         std::chrono::duration<int64_t, std::nano> dt = src.time_since_epoch();
         std::chrono::seconds  dsec = std::chrono::duration_cast<std::chrono::seconds>(dt);
@@ -56,13 +62,20 @@ public:
     void to(TimePoint &des) const {
         des = TimePoint{} + std::chrono::seconds(sec) + std::chrono::nanoseconds(nsec);
     }
+#endif
     
 #if defined(__amd64__)
 #else
     static void compute_offset(Time &t){
-        TimePoint dt;
-        t.to(dt);
-        OFFSET.from(dt -  std::chrono::microseconds(micros()));
+        int64_t t_now = micros();
+        int64_t t_now_sec = (t_now  / 1000000UL);
+        int64_t t_now_nsec = (t_now  % 1000000UL) * 1000UL;
+        OFFSET.nsec = t.nsec - t_now_nsec;
+        OFFSET.sec = t.sec - t_now_sec;
+        if(OFFSET.nsec < 0){
+            OFFSET.sec = OFFSET.sec - 1;
+            OFFSET.nsec = 1000000000UL + OFFSET.nsec;
+        }
     }
 #endif
 
