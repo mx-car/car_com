@@ -47,7 +47,7 @@ void Object::dealloc() {
 }
 void Object::copy_buffer_from ( const char *src ) {
     if ( buffer != NULL ) {
-        for ( std::size_t i = 0; i < this->size; i++ ) {
+        for ( int16_t i = 0; i < this->size; i++ ) {
             buffer[i] = src[i];
         }
     }
@@ -74,7 +74,7 @@ unsigned int Object::deserialize ( const char *data, unsigned int len ) {
         return len;
     }
     * ( ( ObjectHeader * ) this )  = * ( ( ObjectHeader * ) data );
-    if ( len-sizeof ( ObjectHeader ) < this->size ) {
+    if ( len-sizeof ( ObjectHeader ) < (unsigned int) this->size ) {
         this->error();
         return len;
     }

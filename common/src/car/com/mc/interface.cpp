@@ -53,19 +53,17 @@ int8_t Interface::readByte(uint8_t* bt) {
     }
 }
 
-
 int Interface::send () {
-    int total = 0;
     if ( Serial ) {
         time().now();
 	    this->seq = tx_count;
         serialbuffer_used = 0;
         char *c = ( char * ) this;
         serialbuffer[serialbuffer_used++] = 0x00;  // Start Delimiter
-        for ( int i = 0; i < sizeof ( MessageHeader ); i++ ) {
+        for ( unsigned int i = 0; i < sizeof ( MessageHeader ); i++ ) {
             writeByte( (uint8_t) *(c++) );
         }
-        for ( int i = 0; i < this->size; i++ ) {
+        for (unsigned int i = 0; i < this->size; i++ ) {
             writeByte( (uint8_t) buffer[i] );
         }
         serialbuffer[serialbuffer_used++] = 0x01;  // End Delimiter
@@ -103,7 +101,6 @@ int Interface::receive() {
     }
 
     reset();
-    int8_t rc;
     uint8_t rdByte;
     int rx_count = 0;
 

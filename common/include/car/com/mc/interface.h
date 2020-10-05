@@ -1,5 +1,5 @@
 /**
- * @author Markus Bader <markus.bader@mxien.ac.at>
+ * @author Markus Bader <markus.bader@mx-robotics.com>
  * @license Simplified BSD License
  */
 
@@ -30,8 +30,6 @@ private:
     uint8_t serialbuffer[MAX_BUFFER_SIZE];
     uint16_t serialbuffer_used;
 };
-
-
 };
 };
 };
