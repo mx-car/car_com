@@ -30,12 +30,6 @@ void callback ( car::com::Message &header,  car::com::Objects & objects ) {
         case car::com::objects::TYPE_SYNC_REQUEST:
             std::cout << "Sync request" << std::endl;
             break;
-        case car::com::objects::TYPE_POSE:
-            object.get ( pose );
-            std::cout << "Pose: " << pose << std::endl;
-            pose.y +=1.5;
-            serial_arduino.addObject ( car::com::objects::Object ( pose, car::com::objects::TYPE_POSE ) );
-            break;
         case car::com::objects::TYPE_TEXT:
             object.get ( text );
             std::cout << "Text: " << text.txt << std::endl;
@@ -80,7 +74,7 @@ int main ( int argc, char* argv[] ) {
     
     {
         /// send command
-        car::com::objects::Object o(car::com::objects::Actuators(params.rps, 0), car::com::objects::TYPE_COMMAND_ACTUATORS);
+        car::com::objects::Object o(car::com::objects::CmdRaw(params.rps, params.rps, 0), car::com::objects::TYPE_COMMAND_RAW);
         serial_arduino.addObject(o);
     }
     while ( gSignalStatus == 0 ) {
@@ -89,7 +83,7 @@ int main ( int argc, char* argv[] ) {
     
     {
         /// stop motors
-        car::com::objects::Object o(car::com::objects::Actuators(0, 0), car::com::objects::TYPE_COMMAND_ACTUATORS);
+        car::com::objects::Object o(car::com::objects::CmdRaw(0, 0, 0), car::com::objects::TYPE_COMMAND_RAW);
         serial_arduino.addObject(o);
     }
     sleep ( 1 );
