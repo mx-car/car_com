@@ -79,15 +79,17 @@ public:
     }
 #endif
 
-    void now() {
+    static Time now() {
 #if defined(__amd64__)
-        from(Clock::now());
+        Time t;
+        t.from(Clock::now());
+        return t;
 #else
-        sec = OFFSET.sec;
-        nsec = OFFSET.nsec;
+        Time t(OFFSET.sec, OFFSET.nsec);
         //add(millis());
-        add_microseconds(micros());
+        t.add_microseconds(micros());
 #endif
+        return t;
     }
 
 #if defined(__amd64__)
@@ -97,7 +99,7 @@ public:
     };
     std::string getToStringReadable() const {
         char buf[0xFF];
-        sprintf ( buf, "[ %8d,%09d  sec]", sec, nsec );
+        sprintf ( buf, "[ %02d:%02d:%02d,%09d  sec]", sec%86400/3600, sec%3600/60, sec%60, nsec );
         return std::string ( buf );
     }
 #endif

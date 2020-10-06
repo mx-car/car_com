@@ -22,6 +22,7 @@ public:
         set(0, 0, 0);
     };
     State ( float rps_left, float rps_right, float steering ) {
+        stamp = Time::now();
         set(rps_left, rps_right, steering);
     };
     Time stamp;
@@ -52,7 +53,7 @@ public:
     }
     std::string getToStringReadable() const {
         char buf[0xFF];
-        sprintf ( buf, "[ %4.2f rps, %4.2f rps, %4.2f rad]", rps[LEFT], rps[RIGHT], steering );
+        sprintf ( buf, "[%s, %+4.2f rps, %+4.2f rps, %+4.2f rad]", stamp.getToStringReadable().c_str(), rps[LEFT], rps[RIGHT], steering );
         return std::string ( buf );
     }
     bool setFromString ( const std::string &str ) {

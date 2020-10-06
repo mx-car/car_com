@@ -55,7 +55,7 @@ int8_t Interface::readByte(uint8_t* bt) {
 
 int Interface::send () {
     if ( Serial ) {
-        time().now();
+        time() = car::com::objects::Time::now();
 	    this->seq = tx_count;
         serialbuffer_used = 0;
         char *c = ( char * ) this;

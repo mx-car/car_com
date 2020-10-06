@@ -63,7 +63,7 @@ void SerialInterface::serial_monitor ( const std::string& devname, unsigned int 
                     }
                     if ( obj_tx_.size() ) {
                         std::lock_guard<std::mutex> lock ( mutex_obj_tx_ );
-                        msg_tx_.time().now();
+                        msg_tx_.time() = objects::Time::now();
                         for ( Objects::iterator it=obj_tx_.begin(); it!=obj_tx_.end(); ++it ) {
                             car::com::objects::Object &object = it->second;
                             if ( object.type != it->first ) std::cerr << "object type mismatch!!" << std::endl;
