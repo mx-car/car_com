@@ -95,6 +95,11 @@ public:
         os << "[" << o.sec << ", " << o.nsec <<  "]";
         return os;
     };
+    std::string getToStringReadable() const {
+        char buf[0xFF];
+        sprintf ( buf, "[ %8d,%09d  sec]", sec, nsec );
+        return std::string ( buf );
+    }
 #endif
 };
 };

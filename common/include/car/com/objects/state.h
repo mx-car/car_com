@@ -4,6 +4,7 @@
 
 #include <cstdint>
 #include <cstring>
+#include <car/com/objects/time.h>
 
 #if defined(__amd64__)
 #include <iostream>
@@ -23,6 +24,7 @@ public:
     State ( float rps_left, float rps_right, float steering ) {
         set(rps_left, rps_right, steering);
     };
+    Time stamp;
     float rps[2];
     float steering;
     
@@ -46,6 +48,11 @@ public:
     std::string getToString() const {
         char buf[0xFF];
         sprintf ( buf, "[ %4.2f, %4.2f, %4.2f]", rps[LEFT], rps[RIGHT], steering );
+        return std::string ( buf );
+    }
+    std::string getToStringReadable() const {
+        char buf[0xFF];
+        sprintf ( buf, "[ %4.2f rps, %4.2f rps, %4.2f rad]", rps[LEFT], rps[RIGHT], steering );
         return std::string ( buf );
     }
     bool setFromString ( const std::string &str ) {

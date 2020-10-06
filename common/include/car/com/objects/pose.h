@@ -24,6 +24,11 @@ public:
         os << "[" << o.x << ", " << o.y  << ", " << o.theta <<  "]";
         return os;
     };
+    std::string getToStringReadable() const {
+        char buf[0xFF];
+        sprintf ( buf, "[ %4.2f m, %4.2f m, %4.2f rad]", x, y, theta );
+        return std::string ( buf );
+    }
 #endif
 };
 };

@@ -4,10 +4,10 @@
 #include <car/com/pc/interface.h>
 
 namespace {
-  volatile std::sig_atomic_t gSignalStatus;
-} 
-void signal_handler(int signal){
-  gSignalStatus = signal;
+volatile std::sig_atomic_t gSignalStatus;
+}
+void signal_handler(int signal) {
+    gSignalStatus = signal;
 }
 
 struct Parameters {
@@ -21,8 +21,6 @@ car::com::pc::SerialInterface serial_arduino;
 
 void callback ( car::com::Message &header,  car::com::Objects & objects ) {
 
-    car::com::objects::Pose pose;
-    car::com::objects::Text text;
     std::cout << header << std::endl;
     for ( car::com::Objects::iterator it=objects.begin(); it!=objects.end(); ++it ) {
         car::com::objects::Object &object = it->second;
@@ -31,9 +29,26 @@ void callback ( car::com::Message &header,  car::com::Objects & objects ) {
             std::cout << "Sync request" << std::endl;
             break;
         case car::com::objects::TYPE_TEXT:
+        {
+            car::com::objects::Text text;
             object.get ( text );
             std::cout << "Text: " << text.txt << std::endl;
-            break;
+        }
+        break;
+        case car::com::objects::TYPE_COMMAND_RAW:
+        {
+            car::com::objects::CmdRaw target;
+            object.get ( target );
+            std::cout << "Target: " << target << std::endl;
+        }
+        break;
+        case car::com::objects::TYPE_STATE_RAW:
+        {
+            car::com::objects::State state;
+            object.get ( state );
+            std::cout << "State:  " << state << std::endl;
+        }
+        break;
         default:
             std::cout << "Type id: " << object.type << ", of size: " << object.size << std::endl;
         }
@@ -65,13 +80,13 @@ int main ( int argc, char* argv[] ) {
         std::cout << desc << std::endl;
         exit ( 1 );
     }
-    
+
     std::signal(SIGINT, signal_handler);
 
     sleep ( 1 );
     auto  callback_fnc ( std::bind ( &callback, std::placeholders::_1,  std::placeholders::_2 ) );
     serial_arduino.init ( params.serial, callback_fnc );
-    
+
     {
         /// send command
         car::com::objects::Object o(car::com::objects::CmdRaw(params.rps, params.rps, 0), car::com::objects::TYPE_COMMAND_RAW);
@@ -80,14 +95,14 @@ int main ( int argc, char* argv[] ) {
     while ( gSignalStatus == 0 ) {
         sleep ( 1 );
     }
-    
+
     {
         /// stop motors
         car::com::objects::Object o(car::com::objects::CmdRaw(0, 0, 0), car::com::objects::TYPE_COMMAND_RAW);
         serial_arduino.addObject(o);
     }
     sleep ( 1 );
-    
+
     std::cout << "good-bye!" << std::endl;
     std::cout << "SignalValue: " << gSignalStatus << '\n';
 }
