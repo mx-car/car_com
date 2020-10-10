@@ -3,10 +3,12 @@
 #include <boost/program_options.hpp>
 #include <car/com/pc/interface.h>
 
-namespace {
+namespace
+{
 volatile std::sig_atomic_t gSignalStatus;
 }
-void signal_handler(int signal) {
+void signal_handler ( int signal )
+{
     gSignalStatus = signal;
 }
 
@@ -14,12 +16,14 @@ struct Parameters {
     static int loop;
     car::com::pc::Parameters serial;
     int rps;
+    int steering;
 };
 
 car::com::pc::SerialInterface serial_arduino;
 
 
-void callback ( car::com::Message &header,  car::com::Objects & objects ) {
+void callback ( car::com::Message &header,  car::com::Objects & objects )
+{
 
     std::cout << header << std::endl;
     for ( car::com::Objects::iterator it=objects.begin(); it!=objects.end(); ++it ) {
@@ -28,22 +32,19 @@ void callback ( car::com::Message &header,  car::com::Objects & objects ) {
         case car::com::objects::TYPE_SYNC_REQUEST:
             std::cout << "Sync request" << std::endl;
             break;
-        case car::com::objects::TYPE_TEXT:
-        {
+        case car::com::objects::TYPE_TEXT: {
             car::com::objects::Text text;
             object.get ( text );
             std::cout << "Text: " << text.txt << std::endl;
         }
         break;
-        case car::com::objects::TYPE_COMMAND_RAW:
-        {
+        case car::com::objects::TYPE_COMMAND_RAW: {
             car::com::objects::CmdRaw target;
             object.get ( target );
             std::cout << "Target: " << target.getToStringReadable() << std::endl;
         }
         break;
-        case car::com::objects::TYPE_STATE_RAW:
-        {
+        case car::com::objects::TYPE_STATE_RAW: {
             car::com::objects::State state;
             object.get ( state );
             std::cout << "State:  " << state.getToStringReadable() << std::endl;
@@ -56,7 +57,8 @@ void callback ( car::com::Message &header,  car::com::Objects & objects ) {
 }
 
 
-int main ( int argc, char* argv[] ) {
+int main ( int argc, char* argv[] )
+{
     namespace po = boost::program_options;
 
     Parameters params;
@@ -65,7 +67,8 @@ int main ( int argc, char* argv[] ) {
     ( "help", "get this help message" )
     ( "port,m", po::value<std::string> ( &params.serial.port )->default_value ( "/dev/ttyACM0" ), "serial port" )
     ( "baudrate,b", po::value<int> ( &params.serial.baudrate )->default_value ( 115200 ), "baudrate" )
-    ( "rps,r", po::value<int> ( &params.rps )->default_value ( 0 ), "motor rotation per second" );
+    ( "rps,r", po::value<int> ( &params.rps )->default_value ( 0 ), "motor rotation per second" )
+    ( "steering,s", po::value<int> ( &params.steering )->default_value ( 90 ), "motor steering" );
 
     po::variables_map vm;
     try {
@@ -81,7 +84,7 @@ int main ( int argc, char* argv[] ) {
         exit ( 1 );
     }
 
-    std::signal(SIGINT, signal_handler);
+    std::signal ( SIGINT, signal_handler );
 
     sleep ( 1 );
     auto  callback_fnc ( std::bind ( &callback, std::placeholders::_1,  std::placeholders::_2 ) );
@@ -89,10 +92,10 @@ int main ( int argc, char* argv[] ) {
 
     {
         /// send command
-            car::com::objects::CmdRaw target(params.rps, params.rps, 0);
-        car::com::objects::Object o(car::com::objects::CmdRaw(params.rps, params.rps, 0), car::com::objects::TYPE_COMMAND_RAW);
-        
-        serial_arduino.addObject(o);
+        car::com::objects::CmdRaw target ( params.rps, params.rps, params.steering );
+        car::com::objects::Object o ( target, car::com::objects::TYPE_COMMAND_RAW );
+
+        serial_arduino.addObject ( o );
     }
     while ( gSignalStatus == 0 ) {
         sleep ( 1 );
@@ -100,8 +103,8 @@ int main ( int argc, char* argv[] ) {
 
     {
         /// stop motors
-        car::com::objects::Object o(car::com::objects::CmdRaw(0, 0, 0), car::com::objects::TYPE_COMMAND_RAW);
-        serial_arduino.addObject(o);
+        car::com::objects::Object o ( car::com::objects::CmdRaw ( 0, 0, 90 ), car::com::objects::TYPE_COMMAND_RAW );
+        serial_arduino.addObject ( o );
     }
     sleep ( 1 );
 
