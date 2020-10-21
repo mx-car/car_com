@@ -5,8 +5,8 @@ This is the PC motor driver client zu communicate with the acutal motor shields.
 
 ```
 git clone https://github.com/mx-car/carcom.git
-mkdir  motor_shield_driver/build
-cd motor_shield_driver/build
+mkdir  carcom/build
+cd carcom/build
 
 # you can install the lib into your home folder 
 # but you have to set an enviroment varible CarCom_DIR afterwards
