@@ -10,16 +10,18 @@ cd motor_shield_driver/build
 
 # you can install the lib into your home folder 
 # but you have to set an enviroment varible CarCom_DIR afterwards
-cmake -DCMAKE_INSTALL_PREFIX=$HOME/opt/CarCom ..
+export CARCOM_INSTALL_PREFIX=/opt/CarCom
+cmake -DCMAKE_INSTALL_PREFIX=$CARCOM_INSTALL_PREFIX ..
 
 make install 
-export CarCom_DIR=$HOME/opt/CarCom/lib/CMake/CarCom/  
-```
+export CarCom_DIR=$CARCOM_INSTALL_PREFIX/lib/CMake/CarCom/  
 
-Only need if you installed the lib into your home folder
-```
-echo "export CarCom_DIR=$HOME/opt/CarCom/lib/CMake/CarCom/" >> ~/.bashrc
-source ~/.bashrc
+# extend the ld search path
+sudo sh -c "echo $CARCOM_INSTALL_PREFIX/lib > /etc/ld.so.conf.d/carcom.conf"
+sudo ldconfig
+
+# make cmake config avaliable
+echo "export CarCom_DIR=$CARCOM_INSTALL_PREFIX/lib/cmake/realsense2" >> ~/.bashrc
 ```
 
 ## Demo
