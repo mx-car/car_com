@@ -13,8 +13,8 @@ cd carcom/build
 export CARCOM_INSTALL_PREFIX=/opt/CarCom
 cmake -DCMAKE_INSTALL_PREFIX=$CARCOM_INSTALL_PREFIX ..
 
-make install 
-export CarCom_DIR=$CARCOM_INSTALL_PREFIX/lib/CMake/CarCom/  
+make
+sudo make install 
 
 # extend the ld search path
 sudo sh -c "echo $CARCOM_INSTALL_PREFIX/lib > /etc/ld.so.conf.d/carcom.conf"
