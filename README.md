@@ -1,4 +1,4 @@
-# motor_shield_driver
+# carcom
 This is the PC motor driver client zu communicate with the acutal motor shields.
 
 ## build and install
