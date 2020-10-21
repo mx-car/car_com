@@ -28,3 +28,12 @@ echo "export CarCom_DIR=$CARCOM_INSTALL_PREFIX/lib/CMake/CarCom" >> ~/.bashrc
 ```
 demo_car_com -r 100 # to run the motor with 100 rps
 ```
+## Troubleshooting
+* You might have an issue with some Boost functionality cannot be found alltough you have Boost properly installed. Try adding
+`add_definitions(-DBOOST_ERROR_CODE_HEADER_ONLY)`
+to the top level CMakeLists.txt
+* The default comport is dev/ttyACM0 and this might not always be the case. If you have trouble communicating with the device, try changing the com port.
+  ```
+  demo_car_com -m /dev/ttyACM1 -r 100 # to run the motor with 100 rps
+  ```
+  Try with --help for more options.
