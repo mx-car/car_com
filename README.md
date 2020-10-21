@@ -4,7 +4,7 @@ This is the PC motor driver client zu communicate with the acutal motor shields.
 ## build and install
 
 ```
-git clone git@github.com:mx-car/motor_shield_driver.git
+git clone https://github.com/mx-car/carcom.git
 mkdir  motor_shield_driver/build
 cd motor_shield_driver/build
 
