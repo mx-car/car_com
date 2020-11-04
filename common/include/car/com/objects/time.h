@@ -77,8 +77,21 @@ public:
             OFFSET.nsec = 1000000000UL + OFFSET.nsec;
         }
     }
+    /**
+     * converts the mu micros to a time element
+     * @param microsecond
+     **/
+    void fromMicros(int64_t microsecond){
+        sec = OFFSET.sec;
+        nsec = OFFSET.nsec;
+        add_microseconds(microsecond);
+    }
 #endif
 
+    /**
+     * returns the current time
+     * @pre on the micro controller Time::compute_offset must be called first
+     **/
     static Time now() {
 #if defined(__amd64__)
         Time t;
