@@ -26,7 +26,7 @@ echo "export CarCom_DIR=$CARCOM_INSTALL_PREFIX/lib/CMake/CarCom" >> ~/.bashrc
 
 ## Demo
 ```
-demo_car_com -r 100 # to run the motor with 100 rps
+/opt/carcom/bin/demo_car_com -r 100 # to run the motor with 100 rps
 ```
 ## Troubleshooting
 * You might have an issue with some Boost functionality cannot be found alltough you have Boost properly installed. Try adding
