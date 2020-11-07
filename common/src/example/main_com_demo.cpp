@@ -38,16 +38,10 @@ void callback ( car::com::Message &header,  car::com::Objects & objects )
             std::cout << "Text: " << text.txt << std::endl;
         }
         break;
-        case car::com::objects::TYPE_COMMAND_RAW: {
-            car::com::objects::CmdRaw target;
-            object.get ( target );
-            std::cout << "Target: " << target.getToStringReadable() << std::endl;
-        }
-        break;
-        case car::com::objects::TYPE_STATE_RAW: {
-            car::com::objects::State state;
+        case car::com::objects::TYPE_RACE_CAR: {
+            car::com::objects::RaceCar state;
             object.get ( state );
-            std::cout << "State:  " << state.getToStringReadable() << std::endl;
+            std::cout << "CarState: " << state.getToStringReadable() << std::endl;
         }
         break;
         default:
@@ -67,8 +61,8 @@ int main ( int argc, char* argv[] )
     ( "help", "get this help message" )
     ( "port,m", po::value<std::string> ( &params.serial.port )->default_value ( "/dev/ttyACM0" ), "serial port" )
     ( "baudrate,b", po::value<int> ( &params.serial.baudrate )->default_value ( 115200 ), "baudrate" )
-    ( "rps,r", po::value<int> ( &params.rps )->default_value ( 0 ), "motor rotation per second" )
-    ( "steering,s", po::value<int> ( &params.steering )->default_value ( 90 ), "motor steering" );
+    ( "rps,r", po::value<int> ( &params.rps )->default_value ( 0 ), "motor power between -1.0 and 1.0" )
+    ( "steering,s", po::value<int> ( &params.steering )->default_value ( 90 ), "servo steering between -1.0 and 1.0" );
 
     po::variables_map vm;
     try {
@@ -92,8 +86,8 @@ int main ( int argc, char* argv[] )
 
     {
         /// send command
-        car::com::objects::CmdRaw target ( params.rps, params.rps, params.steering );
-        car::com::objects::Object o ( target, car::com::objects::TYPE_COMMAND_RAW );
+        car::com::objects::RaceCar target ( params.rps, params.rps, params.steering );
+        car::com::objects::Object o ( target, car::com::objects::TYPE_RACE_CAR );
 
         serial_arduino.addObject ( o );
     }
@@ -103,7 +97,7 @@ int main ( int argc, char* argv[] )
 
     {
         /// stop motors
-        car::com::objects::Object o ( car::com::objects::CmdRaw ( 0, 0, 90 ), car::com::objects::TYPE_COMMAND_RAW );
+        car::com::objects::Object o ( car::com::objects::RaceCar ( 0, 0, 0 ), car::com::objects::TYPE_RACE_CAR );
         serial_arduino.addObject ( o );
     }
     sleep ( 1 );

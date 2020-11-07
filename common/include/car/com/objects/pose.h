@@ -13,8 +13,9 @@ namespace objects {
 
 class  Pose {
 public:
-    Pose() : x ( 0 ), y ( 0 ), theta ( 0 ) {};
-    Pose ( float x, float y, float theta ) : x ( x ), y ( y ), theta ( theta ) {};
+    Pose() : stamp(), x ( 0 ), y ( 0 ), theta ( 0 ) {};
+    Pose ( float x, float y, float theta ) : stamp(), x ( x ), y ( y ), theta ( theta ) {};
+    Time stamp;
     float x;
     float y;
     float theta;

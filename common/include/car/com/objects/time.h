@@ -15,6 +15,8 @@ namespace car {
 namespace com {
 namespace objects {
 
+static const int LEFT = 0;
+static const int RIGHT = 1;
 
 #if defined(__amd64__)
 using Clock = std::chrono::high_resolution_clock;
@@ -52,27 +54,27 @@ public:
         return !((sec == 0) && (nsec == 0));
     }
 #if defined(__amd64__)
-    void from(const TimePoint &src){
+    void from(const TimePoint &src) {
         std::chrono::duration<int64_t, std::nano> dt = src.time_since_epoch();
         std::chrono::seconds  dsec = std::chrono::duration_cast<std::chrono::seconds>(dt);
         std::chrono::duration<int64_t,  std::nano> dnsec = dt - dsec;
         sec = dsec.count();
-        nsec = std::chrono::duration_cast<std::chrono::nanoseconds>(dnsec).count();    
+        nsec = std::chrono::duration_cast<std::chrono::nanoseconds>(dnsec).count();
     }
     void to(TimePoint &des) const {
         des = TimePoint{} + std::chrono::seconds(sec) + std::chrono::nanoseconds(nsec);
     }
 #endif
-    
+
 #if defined(__amd64__)
 #else
-    static void compute_offset(Time &t){
+    static void compute_offset(Time &t) {
         int64_t t_now = micros();
         int64_t t_now_sec = (t_now  / 1000000UL);
         int64_t t_now_nsec = (t_now  % 1000000UL) * 1000UL;
         OFFSET.nsec = t.nsec - t_now_nsec;
         OFFSET.sec = t.sec - t_now_sec;
-        if(OFFSET.nsec < 0){
+        if(OFFSET.nsec < 0) {
             OFFSET.sec = OFFSET.sec - 1;
             OFFSET.nsec = 1000000000UL + OFFSET.nsec;
         }
@@ -81,7 +83,7 @@ public:
      * converts the mu micros to a time element
      * @param microsecond
      **/
-    void fromMicros(int64_t microsecond){
+    void fromMicros(int64_t microsecond) {
         sec = OFFSET.sec;
         nsec = OFFSET.nsec;
         add_microseconds(microsecond);
