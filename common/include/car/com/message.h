@@ -36,6 +36,11 @@ public:
         os << "[" << o.size <<  ", " << o.seq << ", " << o.time() << "]";
         return os;
     };    
+    std::string getToStringReadable() const {
+        char buf[0xFF];
+        sprintf ( buf, "[%s, %d, %d bytes  ]", stamp.getToStringReadable().c_str(), seq, size);
+        return std::string ( buf );
+    }
 #endif
 };
 
@@ -43,7 +48,7 @@ class Message : public MessageHeader {
 protected:
 public:
     Message();
-    static const int MAX_BUFFER_SIZE = 0x1FF;
+    static const int MAX_BUFFER_SIZE = 0x8FF;
     char buffer[MAX_BUFFER_SIZE];
     int stack_pointer;
     bool isValid();

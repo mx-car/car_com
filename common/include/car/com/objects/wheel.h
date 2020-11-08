@@ -25,46 +25,30 @@ static const int REAR_WHEEL_RIGHT = 3;
 class  Wheel {
 public:
     Wheel() 
-    : stamp() 
-    , target{0.0, 0.0}
+    : target{0.0, 0.0}
     , angle{0.0, 0.0}
     , speed{0.0, 0.0}
-    , torque{0.0, 0.0}
-    , pose() {
+    , torque{0.0, 0.0} {
     };
-    Wheel ( float rotation, float steering, bool tstamp = true) : stamp(){
-        setTarget(rotation, steering, tstamp);
+    Wheel ( float rotation, float steering){
+        setTarget(rotation, steering);
     }
-    void setTarget(float rotation, float steering, bool tstamp = true){
+    void setTarget(float rotation, float steering){
         target[ROTATION] = rotation, target[STEERING] = steering;
-        target_stamp = Time::now();
     }
-    void setTarget(float rotation, float steering, const Time &t){
-        setTarget(rotation, steering, false);
-        target_stamp = t;
-    }
-    void setAngle(float rotation, float steering, bool tstamp = true){
+    void setAngle(float rotation, float steering){
         angle[ROTATION] = rotation, target[STEERING] = steering;
-        target_angle = Time::now();
     }
-    void setSpeed(float rotation, float steering, bool tstamp = true){
+    void setSpeed(float rotation, float steering){
         speed[ROTATION] = rotation, speed[STEERING] = steering;
-        target_speed = Time::now();
     }
-    void setTorque(float rotation, float steering, bool tstamp = true){
+    void setTorque(float rotation, float steering){
         torque[ROTATION] = rotation, torque[STEERING] = steering;
-        target_torque = Time::now();
     }
-    Time stamp;              /// object stamp time when it was submitted
-    Time target_stamp;       /// time when the target value should or was applied
     float target[2];         /// target values dimensionless
-    Time target_angle;       /// time when the angle measurement was taken or computed
     float angle[2];          /// [rad] absolute angles. Wheel positon and steering angle
-    Time target_speed;       /// time when the speed measurement was taken or computed
     float speed[2];          /// [rad/s] speed. Wheel and steering speed 
-    Time target_torque;      /// time when the torque measurement was taken or computed
     float torque[2];         /// [Nm] torque. Wheel and steering torque 
-    Pose pose;               /// location/mount point of the wheel on the vehicle
     
 #if defined(__amd64__)
     friend std::ostream &operator << ( std::ostream &os, const Wheel &o ) {
@@ -79,18 +63,18 @@ public:
         return input;
     }
     std::string getToString() const {
-        char buf[0xFF];
+        char buf[0x1FF];
         sprintf ( buf, "[ %+4.3f, %+4.3f, %+4.3f, %+4.3f, %+4.3f, %+4.3f, %+4.3f, %+4.3f]", target[ROTATION], target[STEERING], angle[ROTATION], angle[STEERING], speed[ROTATION], speed[STEERING], torque[ROTATION], torque[STEERING] );
         return std::string ( buf );
     }
     std::string getToStringReadable() const {
-        char buf[0xFF];
-        sprintf ( buf, "[%s, %+4.3f, %+4.3f, %+4.3f, %+4.3f, %+4.3f, %+4.3f, %+4.3f, %+4.3f ]", stamp.getToStringReadable().c_str(), target[ROTATION], target[STEERING], angle[ROTATION], angle[STEERING], speed[ROTATION], speed[STEERING], torque[ROTATION], torque[STEERING] );
+        char buf[0x1FF];
+        sprintf ( buf, "[ %+4.3f, %+4.3f, %+4.3f, %+4.3f, %+4.3f, %+4.3f, %+4.3f, %+4.3f ]", target[ROTATION], target[STEERING], angle[ROTATION], angle[STEERING], speed[ROTATION], speed[STEERING], torque[ROTATION], torque[STEERING] );
         return std::string ( buf );
     }
     std::string getToStringReadableSimple() const {
-        char buf[0xFF];
-        sprintf ( buf, "[%s, roation: %+4.3f pow, %+4.3f rps; steering: %+4.3f pow, %+4.3f rad  ]", stamp.getToStringReadable().c_str(), target[ROTATION], speed[ROTATION], target[STEERING], angle[STEERING] );
+        char buf[0x1FF];
+        sprintf ( buf, "[ roation: %+4.3f pow, %+4.3f rps; steering: %+4.3f pow, %+4.3f rad  ]", target[ROTATION], speed[ROTATION], target[STEERING], angle[STEERING] );
         return std::string ( buf );
     }
     bool setFromString ( const std::string &str ) {
@@ -103,34 +87,67 @@ public:
 #endif
 };
 
+class  WheelTimeStamp {
+public:
+    WheelTimeStamp() {}
+    Time target;
+    Time angle;
+    Time speed;
+    Time torque;
+#if defined(__amd64__)
+    std::string getToStringReadable() const {
+        char buf[0xFF];
+        sprintf ( buf, "[%s, %s, %s, %s ]", target.getToStringReadable().c_str(), angle.getToStringReadable().c_str(), speed.getToStringReadable().c_str(), torque.getToStringReadable().c_str() );
+        return std::string ( buf );
+    }
+#endif
+};
+
 class  WheelCommand {
 public:
     WheelCommand() 
     : stamp()
     , wheel{{0.,0.}, {0.,0.}, {0.,0.}, {0.,0.}}{
     };
-    WheelCommand ( float left, float right, float steering ) : stamp(){
-        set(left, right, steering);
-    }
-    void set(float left, float right, float steering){
-        motor[0] = left, motor[1] = right, servo = steering;
-    }
-    WheelCommand &setTargetAckermann(float engery, float steering){
-        wheel[FRONT_WHEEL_LEFT][ROTATION] = 0;
-        wheel[FRONT_WHEEL_LEFT][STEERING] = steering;
-        wheel[FRONT_WHEEL_RIGHT][ROTATION] = 0;
-        wheel[FRONT_WHEEL_RIGHT][STEERING] = steering;
+    static const WheelCommand getCommandAckermann(float engery, float steering){
+        WheelCommand cmd;
+        cmd.wheel[FRONT_WHEEL_LEFT][ROTATION] = 0;
+        cmd.wheel[FRONT_WHEEL_LEFT][STEERING] = steering;
+        cmd.wheel[FRONT_WHEEL_RIGHT][ROTATION] = 0;
+        cmd.wheel[FRONT_WHEEL_RIGHT][STEERING] = steering;
         
-        wheel[FRONT_WHEEL_LEFT][ROTATION] = engery;
-        wheel[FRONT_WHEEL_LEFT][STEERING] = 0;
-        wheel[FRONT_WHEEL_RIGHT][ROTATION] = engery;
-        wheel[FRONT_WHEEL_RIGHT][STEERING] = 0;
+        cmd.wheel[REAR_WHEEL_LEFT][ROTATION] = engery;
+        cmd.wheel[REAR_WHEEL_LEFT][STEERING] = 0;
+        cmd.wheel[REAR_WHEEL_RIGHT][ROTATION] = engery;
+        cmd.wheel[REAR_WHEEL_RIGHT][STEERING] = 0;
         
-        target_torque = Time::now();
-        return *this;
+        cmd.stamp = Time::now();
+        return cmd;
     }
     Time stamp;
     float wheel[4][2];
+#if defined(__amd64__)
+    friend std::ostream &operator << ( std::ostream &os, const WheelCommand &o ) {
+        os << o.getToString();
+        return os;
+    };
+    std::string getToString() const {
+        char buf[0x1FF];
+        sprintf ( buf, "[ %+4.3f, %+4.3f, %+4.3f, %+4.3f, %+4.3f, %+4.3f, %+4.3f, %+4.3f]", 
+                  wheel[FRONT_WHEEL_LEFT ][ROTATION], wheel[FRONT_WHEEL_LEFT ][STEERING], 
+                  wheel[FRONT_WHEEL_LEFT ][ROTATION], wheel[FRONT_WHEEL_RIGHT][STEERING], 
+                  wheel[REAR_WHEEL_LEFT  ][ROTATION], wheel[REAR_WHEEL_LEFT  ][STEERING], 
+                  wheel[REAR_WHEEL_RIGHT ][ROTATION], wheel[REAR_WHEEL_RIGHT ][STEERING] );
+        return std::string ( buf );
+    }
+    std::string getToStringReadable() const {
+        char buf[0x1FF];
+        float avr_rotation = wheel[REAR_WHEEL_LEFT ][ROTATION] / 2.0 + wheel[REAR_WHEEL_RIGHT ][ROTATION] / 2.0;
+        float avr_steering = wheel[FRONT_WHEEL_LEFT][STEERING] / 2.0 + wheel[FRONT_WHEEL_RIGHT][STEERING] / 2.0;
+        sprintf ( buf, "[%s, %+4.3f pow, %+4.3f servo ]", stamp.getToStringReadable().c_str(), avr_rotation, avr_steering);
+        return std::string ( buf );
+    }
+#endif
 };
 
 };

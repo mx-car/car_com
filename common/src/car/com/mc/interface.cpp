@@ -70,13 +70,12 @@ int Interface::send () {
 
 
 
-//        Serial.write((const char*) serialbuffer, (size_t) serialbuffer_used);
-        for (unsigned int i = 0; i < serialbuffer_used; i++) {
-            Serial.write((char) serialbuffer[i]);
-        }
+        Serial.write((const char*) serialbuffer, (size_t) serialbuffer_used);
+        //for (unsigned int i = 0; i < serialbuffer_used; i++)   Serial.write((char) serialbuffer[i]);
 
 
-        Serial.flush();
+        //Serial.flush();
+        //Serial.send_now();
         tx_count++;
     }
     return sizeof ( MessageHeader ) + this->size;

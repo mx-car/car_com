@@ -5,8 +5,6 @@
 #include <car/com/objects/pose.h>
 #include <car/com/objects/text.h>
 #include <car/com/objects/actuators.h>
-#include <car/com/objects/raw_command.h>
-#include <car/com/objects/raw_measurement.h>
 #include <car/com/objects/twist.h>
 #include <car/com/objects/description_vehicle.h>
 #include <car/com/objects/race_car.h>
@@ -45,6 +43,8 @@ static const uint16_t TYPE_COMMAND_ACKERMANN_CONFIG = 5050;
 static const uint16_t TYPE_STATE_RAW = 6000;
 static const uint16_t TYPE_RAW_COMMAND = 6010;
 static const uint16_t TYPE_RACE_CAR = 6020;
+static const uint16_t TYPE_COMMAND_CAR_ACKERMANN = 6030;
+static const uint16_t TYPE_CONFIG_CAR = 6040;
 
 typedef uint16_t ObjectType;
 

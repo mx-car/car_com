@@ -114,7 +114,7 @@ public:
     };
     std::string getToStringReadable() const {
         char buf[0xFF];
-        sprintf ( buf, "[ %02d:%02d:%02d,%09d  sec]", sec%86400/3600, sec%3600/60, sec%60, nsec );
+        sprintf ( buf, "[ %02d:%02d:%02d,%09d ]", sec%86400/3600, sec%3600/60, sec%60, nsec );
         return std::string ( buf );
     }
 #endif
