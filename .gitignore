@@ -51,6 +51,7 @@ _deps
 
 # kdevelop
 *kdev*
+*.kate-swp
 
 # clion
 .idea

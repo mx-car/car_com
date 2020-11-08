@@ -102,6 +102,37 @@ public:
     }
 #endif
 };
+
+class  WheelCommand {
+public:
+    WheelCommand() 
+    : stamp()
+    , wheel{{0.,0.}, {0.,0.}, {0.,0.}, {0.,0.}}{
+    };
+    WheelCommand ( float left, float right, float steering ) : stamp(){
+        set(left, right, steering);
+    }
+    void set(float left, float right, float steering){
+        motor[0] = left, motor[1] = right, servo = steering;
+    }
+    WheelCommand &setTargetAckermann(float engery, float steering){
+        wheel[FRONT_WHEEL_LEFT][ROTATION] = 0;
+        wheel[FRONT_WHEEL_LEFT][STEERING] = steering;
+        wheel[FRONT_WHEEL_RIGHT][ROTATION] = 0;
+        wheel[FRONT_WHEEL_RIGHT][STEERING] = steering;
+        
+        wheel[FRONT_WHEEL_LEFT][ROTATION] = engery;
+        wheel[FRONT_WHEEL_LEFT][STEERING] = 0;
+        wheel[FRONT_WHEEL_RIGHT][ROTATION] = engery;
+        wheel[FRONT_WHEEL_RIGHT][STEERING] = 0;
+        
+        target_torque = Time::now();
+        return *this;
+    }
+    Time stamp;
+    float wheel[4][2];
+};
+
 };
 };
 };

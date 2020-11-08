@@ -25,8 +25,8 @@ public:
         motor[0] = left, motor[1] = right, servo = steering;
     }
     Time stamp;
-    float motor[2];
-    float servo;
+    float roation[2];
+    float steering;
     
 #if defined(__amd64__)
     friend std::ostream &operator << ( std::ostream &os, const RawCommand &o ) {

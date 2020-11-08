@@ -40,15 +40,6 @@ public:
     Twist twist;
     PoseStamped  pose;
     
-    RaceCar &setTargetAckermann(float engery, float steering){
-        wheels_model_checked = false;
-        Time t = Time::now();
-        wheels[FRONT_WHEEL_LEFT].setTarget(0, steering, t);
-        wheels[FRONT_WHEEL_RIGHT].setTarget(0, steering, t);
-        wheels[REAR_WHEEL_LEFT].setTarget(engery, 0, t);
-        wheels[REAR_WHEEL_RIGHT].setTarget(engery, 0, t);
-        return *this;
-    }
     
 #if defined(__amd64__)
     friend std::ostream &operator << ( std::ostream &os, const RaceCar &o ) {
