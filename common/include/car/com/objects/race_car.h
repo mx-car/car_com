@@ -9,6 +9,7 @@
 #include <car/com/objects/raw_command.h>
 #include <car/com/objects/raw_measurement.h>
 #include <car/com/objects/twist.h>
+#include <car/com/objects/wheel.h>
 #include <car/com/objects/description_vehicle.h>
 
 #if defined(__amd64__)
@@ -19,26 +20,33 @@
 namespace car {
 namespace com {
 namespace objects {
-
+    
     
 class  RaceCar {
 public:
-    RaceCar() {
-        set(0, 0, 0);
+    RaceCar()
+    : stamp()
+    , wheels_model_checked(false)  {
     };
-    RaceCar ( float rps_left, float rps_right, float steering ) {
+    RaceCar (float engery, float steering) 
+    : stamp()
+    , wheels_model_checked(false) {
         stamp = Time::now();
-        set(rps_left, rps_right, steering);
+        setTargetAckermann(engery, steering);
     };
     Time stamp;
+    bool wheels_model_checked;
+    Wheel wheels[4];
     Twist twist;
-    RawCommand motors;
-    DescriptionVehicle description;
-    RawMeasurement measurments;
-    Pose  pose;
+    PoseStamped  pose;
     
-    RaceCar &set(float rps_left, float rps_right, float steering){
-        motors.set(rps_left, rps_right, steering);
+    RaceCar &setTargetAckermann(float engery, float steering){
+        wheels_model_checked = false;
+        Time t = Time::now();
+        wheels[FRONT_WHEEL_LEFT].setTarget(0, steering, t);
+        wheels[FRONT_WHEEL_RIGHT].setTarget(0, steering, t);
+        wheels[REAR_WHEEL_LEFT].setTarget(engery, 0, t);
+        wheels[REAR_WHEEL_RIGHT].setTarget(engery, 0, t);
         return *this;
     }
     
@@ -47,30 +55,21 @@ public:
         os << o.getToString();
         return os;
     };
-    friend std::istream& operator>>(std::istream &input, RaceCar &o)
-    {
-        std::string str;
-        getline (input, str);
-        o.setFromString(str);
-        return input;
-    }
     std::string getToString() const {
         std::stringstream ss;
-        ss << "[ " << stamp << ", " << twist << ", " << motors << ", " << description << ", " << measurments << ", " << pose << "]" << std::endl;
+        ss << "[ " << stamp << ", " << wheels_model_checked;
+        for(size_t i = 0; i < 4; i++) ss << ", " << wheels;
+        ss << ", " << pose << "]" << std::endl;
         return ss.str();
     }
     std::string getToStringReadable() const {
         std::stringstream ss;
         ss << stamp.getToStringReadable().c_str() << std::endl;
+        ss << "Wheels       :";
+        for(size_t i = 0; i < 4; i++) ss << " " << i << ": " <<  wheels[i].getToStringReadableSimple() << std::endl;
         ss << "Twist        : "  << twist.getToStringReadable() << std::endl;
-        ss << "Motors       : "  << motors.getToStringReadable() << std::endl;
-        ss << "Description  : "  << description.getToStringReadable() << std::endl;
-        ss << "Measurements : "  << measurments.getToStringReadable() << std::endl;
         ss << "Pose         : "  << pose.getToStringReadable() << std::endl;
         return ss.str();
-    }
-    bool setFromString ( const std::string &str ) {
-        return motors.setFromString(str);;
     }
 #endif
 

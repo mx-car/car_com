@@ -25,7 +25,7 @@ car::com::pc::SerialInterface serial_arduino;
 void callback ( car::com::Message &header,  car::com::Objects & objects )
 {
 
-    std::cout << header << std::endl;
+    std::cout << header << " with " << objects.size()  << " objects" << std::endl;
     for ( car::com::Objects::iterator it=objects.begin(); it!=objects.end(); ++it ) {
         car::com::objects::Object &object = it->second;
         switch ( it->first ) {
@@ -86,7 +86,7 @@ int main ( int argc, char* argv[] )
 
     {
         /// send command
-        car::com::objects::RaceCar target ( params.rps, params.rps, params.steering );
+        car::com::objects::RaceCar target ( params.rps, params.steering );
         car::com::objects::Object o ( target, car::com::objects::TYPE_RACE_CAR );
 
         serial_arduino.addObject ( o );
@@ -97,7 +97,7 @@ int main ( int argc, char* argv[] )
 
     {
         /// stop motors
-        car::com::objects::Object o ( car::com::objects::RaceCar ( 0, 0, 0 ), car::com::objects::TYPE_RACE_CAR );
+        car::com::objects::Object o ( car::com::objects::RaceCar ( 0, 0 ), car::com::objects::TYPE_RACE_CAR );
         serial_arduino.addObject ( o );
     }
     sleep ( 1 );
