@@ -4,7 +4,6 @@
 #include <car/com/objects/time.h>
 #include <car/com/objects/pose.h>
 #include <car/com/objects/text.h>
-#include <car/com/objects/actuators.h>
 #include <car/com/objects/twist.h>
 #include <car/com/objects/config_ackermann.h>
 #include <car/com/objects/command_ackermann.h>
@@ -45,6 +44,8 @@ static const uint16_t TYPE_RAW_COMMAND = 6010;
 static const uint16_t TYPE_STATE_ACKERMANN = 6020;
 static const uint16_t TYPE_COMMAND_ACKERMANN = 6030;
 static const uint16_t TYPE_CONFIG_ACKERMANN = 6040;
+static const uint16_t TYPE_ARRAY_4N = 6050;
+static const uint16_t TYPE_ARRAY_8N = 6060;
 
 typedef uint16_t ObjectType;
 

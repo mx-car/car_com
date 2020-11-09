@@ -8,6 +8,7 @@
 #include <car/com/objects/pose.h>
 #include <car/com/objects/twist.h>
 #include <car/com/objects/wheel.h>
+#include <car/com/objects/array.h>
 #include <car/com/objects/config_ackermann.h>
 #include <car/com/objects/command_ackermann.h>
 

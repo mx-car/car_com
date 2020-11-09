@@ -57,6 +57,11 @@ void callback ( car::com::Message &header,  car::com::Objects & objects )
             object.get ( config );
             std::cout << "ConfigAckermann : " << config.getToStringReadable() << std::endl;
         }
+        case car::com::objects::TYPE_ARRAY_4N: {
+            car::com::objects::Array<4> array;
+            object.get ( array );
+            std::cout << "Array<4> : " << array << std::endl;
+        }
         break;
         default:
             std::cout << "Type id: " << object.type << ", of size: " << object.size << std::endl;
