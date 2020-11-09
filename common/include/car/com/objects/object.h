@@ -6,8 +6,9 @@
 #include <car/com/objects/text.h>
 #include <car/com/objects/actuators.h>
 #include <car/com/objects/twist.h>
-#include <car/com/objects/description_vehicle.h>
-#include <car/com/objects/race_car.h>
+#include <car/com/objects/config_ackermann.h>
+#include <car/com/objects/command_ackermann.h>
+#include <car/com/objects/state_ackermann.h>
 #include <cstdio>
 
 namespace car {
@@ -35,16 +36,15 @@ static const uint16_t TYPE_IMU_GYROSCOPE = 701;
 static const uint16_t TYPE_IMU_MAGNETOMETER = 702;
 static const uint16_t TYPE_IMU_ENVIRONMENT = 703;
 static const uint16_t TYPE_COMMAND_ACTUATORS = 5010;
-static const uint16_t TYPE_COMMAND_ACKERMANN = 5020;
 static const uint16_t TYPE_COMMAND_MOTOR_PID = 5030;
 static const uint16_t TYPE_COMMAND_SERVO_PID = 5040;
 static const uint16_t TYPE_COMMAND_ACKERMANN_CONFIG = 5050;
 
 static const uint16_t TYPE_STATE_RAW = 6000;
 static const uint16_t TYPE_RAW_COMMAND = 6010;
-static const uint16_t TYPE_RACE_CAR = 6020;
-static const uint16_t TYPE_COMMAND_CAR_ACKERMANN = 6030;
-static const uint16_t TYPE_CONFIG_CAR = 6040;
+static const uint16_t TYPE_STATE_ACKERMANN = 6020;
+static const uint16_t TYPE_COMMAND_ACKERMANN = 6030;
+static const uint16_t TYPE_CONFIG_ACKERMANN = 6040;
 
 typedef uint16_t ObjectType;
 

@@ -17,10 +17,10 @@ namespace objects {
     
 static const int ROTATION = 0;
 static const int STEERING = 1;
-static const int FRONT_WHEEL_LEFT = 0;
-static const int FRONT_WHEEL_RIGHT = 1;
-static const int REAR_WHEEL_LEFT = 2;
-static const int REAR_WHEEL_RIGHT = 3;
+static const int REAR_WHEEL_LEFT = 0;
+static const int REAR_WHEEL_RIGHT = 1;
+static const int FRONT_WHEEL_LEFT = 2;
+static const int FRONT_WHEEL_RIGHT = 3;
 
 class  Wheel {
 public:
@@ -98,53 +98,6 @@ public:
     std::string getToStringReadable() const {
         char buf[0xFF];
         sprintf ( buf, "[%s, %s, %s, %s ]", target.getToStringReadable().c_str(), angle.getToStringReadable().c_str(), speed.getToStringReadable().c_str(), torque.getToStringReadable().c_str() );
-        return std::string ( buf );
-    }
-#endif
-};
-
-class  WheelCommand {
-public:
-    WheelCommand() 
-    : stamp()
-    , wheel{{0.,0.}, {0.,0.}, {0.,0.}, {0.,0.}}{
-    };
-    static const WheelCommand getCommandAckermann(float engery, float steering){
-        WheelCommand cmd;
-        cmd.wheel[FRONT_WHEEL_LEFT][ROTATION] = 0;
-        cmd.wheel[FRONT_WHEEL_LEFT][STEERING] = steering;
-        cmd.wheel[FRONT_WHEEL_RIGHT][ROTATION] = 0;
-        cmd.wheel[FRONT_WHEEL_RIGHT][STEERING] = steering;
-        
-        cmd.wheel[REAR_WHEEL_LEFT][ROTATION] = engery;
-        cmd.wheel[REAR_WHEEL_LEFT][STEERING] = 0;
-        cmd.wheel[REAR_WHEEL_RIGHT][ROTATION] = engery;
-        cmd.wheel[REAR_WHEEL_RIGHT][STEERING] = 0;
-        
-        cmd.stamp = Time::now();
-        return cmd;
-    }
-    Time stamp;
-    float wheel[4][2];
-#if defined(__amd64__)
-    friend std::ostream &operator << ( std::ostream &os, const WheelCommand &o ) {
-        os << o.getToString();
-        return os;
-    };
-    std::string getToString() const {
-        char buf[0x1FF];
-        sprintf ( buf, "[ %+4.3f, %+4.3f, %+4.3f, %+4.3f, %+4.3f, %+4.3f, %+4.3f, %+4.3f]", 
-                  wheel[FRONT_WHEEL_LEFT ][ROTATION], wheel[FRONT_WHEEL_LEFT ][STEERING], 
-                  wheel[FRONT_WHEEL_LEFT ][ROTATION], wheel[FRONT_WHEEL_RIGHT][STEERING], 
-                  wheel[REAR_WHEEL_LEFT  ][ROTATION], wheel[REAR_WHEEL_LEFT  ][STEERING], 
-                  wheel[REAR_WHEEL_RIGHT ][ROTATION], wheel[REAR_WHEEL_RIGHT ][STEERING] );
-        return std::string ( buf );
-    }
-    std::string getToStringReadable() const {
-        char buf[0x1FF];
-        float avr_rotation = wheel[REAR_WHEEL_LEFT ][ROTATION] / 2.0 + wheel[REAR_WHEEL_RIGHT ][ROTATION] / 2.0;
-        float avr_steering = wheel[FRONT_WHEEL_LEFT][STEERING] / 2.0 + wheel[FRONT_WHEEL_RIGHT][STEERING] / 2.0;
-        sprintf ( buf, "[%s, %+4.3f pow, %+4.3f servo ]", stamp.getToStringReadable().c_str(), avr_rotation, avr_steering);
         return std::string ( buf );
     }
 #endif

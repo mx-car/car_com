@@ -17,6 +17,9 @@ struct Parameters {
     car::com::pc::Parameters serial;
     float rps;
     float steering;
+    float wheel_diameter;
+    float wheel_displacement;
+    float axis_displacement;
 };
 
 car::com::pc::SerialInterface serial_arduino;
@@ -38,21 +41,21 @@ void callback ( car::com::Message &header,  car::com::Objects & objects )
             std::cout << "Text: " << text.txt << std::endl;
         }
         break;
-        case car::com::objects::TYPE_RACE_CAR: {
-            car::com::objects::RaceCar state;
+        case car::com::objects::TYPE_STATE_ACKERMANN: {
+            car::com::objects::StateAckermann state;
             object.get ( state );
-            std::cout << "CarState: " << state.getToStringReadable() << std::endl;
+            std::cout << "StateAckermann  : " << state.getToStringReadable() << std::endl;
         }
         break;
-        case car::com::objects::TYPE_COMMAND_CAR_ACKERMANN: {
-            car::com::objects::WheelCommand cmd;
+        case car::com::objects::TYPE_COMMAND_ACKERMANN: {
+            car::com::objects::CommandAckermann cmd;
             object.get ( cmd );
-            std::cout << "WheelCommand: " << cmd.getToStringReadable() << std::endl;
+            std::cout << "CommandAckermann: " << cmd.getToStringReadable() << std::endl;
         }
-        case car::com::objects::TYPE_CONFIG_CAR: {
-            car::com::objects::CarConfig config;
+        case car::com::objects::TYPE_CONFIG_ACKERMANN: {
+            car::com::objects::ConfigAckermann config;
             object.get ( config );
-            std::cout << "CarConfig: " << config.getToStringReadable() << std::endl;
+            std::cout << "ConfigAckermann : " << config.getToStringReadable() << std::endl;
         }
         break;
         default:
@@ -71,9 +74,12 @@ int main ( int argc, char* argv[] )
     desc.add_options()
     ( "help", "get this help message" )
     ( "port,m", po::value<std::string> ( &params.serial.port )->default_value ( "/dev/ttyACM0" ), "serial port" )
-    ( "baudrate,b", po::value<int> ( &params.serial.baudrate )->default_value ( 500000 ), "baudrate" )
+    ( "baudrate,b", po::value<int> ( &params.serial.baudrate )->default_value ( 115200 ), "baudrate" )
     ( "rps,r", po::value<float> ( &params.rps )->default_value ( 0 ), "motor power between -1.0 and 1.0" )
-    ( "steering,s", po::value<float> ( &params.steering )->default_value ( 90 ), "servo steering between -1.0 and 1.0" );
+    ( "steering,s", po::value<float> ( &params.steering )->default_value ( 90 ), "servo steering between -1.0 and 1.0" )
+    ( "wheel_diameter", po::value<float> ( &params.wheel_diameter )->default_value ( 0.065 ), "wheel diameter [m]" )
+    ( "wheel_displacement", po::value<float> ( &params.wheel_displacement )->default_value ( 0.153 ), "wheel displacement [m]" )
+    ( "axis_displacement", po::value<float> ( &params.axis_displacement )->default_value ( 0.26 ), "axis displacement [m]" );
 
     po::variables_map vm;
     try {
@@ -91,17 +97,18 @@ int main ( int argc, char* argv[] )
 
     std::signal ( SIGINT, signal_handler );
 
-    sleep ( 1 );
+    /// send command
+    car::com::objects::CommandAckermann command_object( params.rps, params.steering );
+    car::com::objects::ConfigAckermann config_ackermann(params.wheel_diameter, params.wheel_displacement, params.axis_displacement );
+
     auto  callback_fnc ( std::bind ( &callback, std::placeholders::_1,  std::placeholders::_2 ) );
     serial_arduino.init ( params.serial, callback_fnc );
-
+    sleep ( 1 );
     {
-        /// send command
-        car::com::objects::Object command ( car::com::objects::WheelCommand::getCommandAckermann( params.rps, params.steering ), car::com::objects::TYPE_COMMAND_CAR_ACKERMANN );
-        car::com::objects::Object config ( car::com::objects::CarConfig::getAckermannConfig( 0.15, 0.30 ), car::com::objects::TYPE_CONFIG_CAR );
 
-        serial_arduino.addObject ( command );
-        serial_arduino.addObject ( config );
+        serial_arduino.addObject ( car::com::objects::Object( command_object, car::com::objects::TYPE_COMMAND_ACKERMANN ) );
+        serial_arduino.addObject ( car::com::objects::Object (config_ackermann, car::com::objects::TYPE_CONFIG_ACKERMANN ) );
+
     }
     while ( gSignalStatus == 0 ) {
         sleep ( 1 );
@@ -109,7 +116,7 @@ int main ( int argc, char* argv[] )
 
     {
         /// stop motors
-        car::com::objects::Object o ( car::com::objects::WheelCommand::getCommandAckermann( 0, 0 ), car::com::objects::TYPE_COMMAND_CAR_ACKERMANN );
+        car::com::objects::Object o ( car::com::objects::CommandAckermann( 0, 0 ), car::com::objects::TYPE_COMMAND_ACKERMANN );
         serial_arduino.addObject ( o );
     }
     sleep ( 1 );

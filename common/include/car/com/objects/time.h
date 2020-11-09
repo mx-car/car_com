@@ -64,6 +64,10 @@ public:
     void to(TimePoint &des) const {
         des = TimePoint{} + std::chrono::seconds(sec) + std::chrono::nanoseconds(nsec);
     }
+    template<typename TimeObject>
+    void set(const TimeObject &s){
+        sec = s.sec, nsec = s.nsec;
+    }
 #endif
 
 #if defined(__amd64__)
