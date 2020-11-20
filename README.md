@@ -29,8 +29,10 @@ echo "export CarCom_DIR=$CARCOM_INSTALL_PREFIX/lib/CMake/CarCom" >> ~/.bashrc
 /opt/carcom/bin/demo_car_com -r 100 # to run the motor with 100 rps
 ```
 ## Troubleshooting
-* If you are compiling it on a RPI then you will have some problems. To remedy it them all do the type in the following command under carcom/ :
+* If you are compiling it on a RPI then you will have some problems compiling. To remedy them all, type in the following command under carcom/ :#
+
 `find . -type f | xargs sed -i  's/if defined(__amd64__)/if defined(__amd64__) || defined(__aarch64__)/g'`
+
 Doing so will prevent the compiler from compiling Arduino code for the RPI.
 * You might have an issue with some Boost functionality cannot be found alltough you have Boost properly installed. Try adding
 `add_definitions(-DBOOST_ERROR_CODE_HEADER_ONLY)`
