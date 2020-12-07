@@ -42,10 +42,11 @@ public:
         nsec = dnsec % 1000000000UL;
     }
     void add_microseconds(int64_t microsecond) {
-        int64_t dsec = ( microsecond / 1000000UL  ) + sec;
-        int64_t dnsec = ( microsecond % 1000000UL ) * 1000UL + nsec;
-        sec = dsec + dnsec / 1000000UL;
-        nsec = dnsec % 1000000UL;
+        int64_t dsec = microsecond / 1000000UL + sec;
+        int64_t dmsec = microsecond % 1000000UL;
+        int64_t dnsec = dmsec * 1000UL + nsec;
+        sec = dsec + dnsec / 1000000000UL;
+        nsec = dnsec % 1000000000UL;
     }
     static Time &offest() {
         return OFFSET;
@@ -84,13 +85,13 @@ public:
         }
     }
     /**
-     * converts the mu micros to a time element
+     * returns the time based on the micro clock
      * @param microsecond
      **/
-    void fromMicros(int64_t microsecond) {
-        sec = OFFSET.sec;
-        nsec = OFFSET.nsec;
-        add_microseconds(microsecond);
+    static Time fromMicros(int64_t microsecond) {
+        Time t(OFFSET.sec, OFFSET.nsec);
+        t.add_microseconds(microsecond);
+        return t;
     }
 #endif
 
@@ -104,9 +105,7 @@ public:
         t.from(Clock::now());
         return t;
 #else
-        Time t(OFFSET.sec, OFFSET.nsec);
-        //add(millis());
-        t.add_microseconds(micros());
+        Time t = fromMicros(micros());
 #endif
         return t;
     }

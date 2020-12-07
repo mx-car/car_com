@@ -111,8 +111,8 @@ int main ( int argc, char* argv[] )
     sleep ( 1 );
     {
 
-        serial_arduino.addObject ( car::com::objects::Object( command_object, car::com::objects::TYPE_COMMAND_ACKERMANN ) );
         serial_arduino.addObject ( car::com::objects::Object (config_ackermann, car::com::objects::TYPE_CONFIG_ACKERMANN ) );
+        serial_arduino.addObject ( car::com::objects::Object( command_object, car::com::objects::TYPE_COMMAND_ACKERMANN ) );
 
     }
     while ( gSignalStatus == 0 ) {
