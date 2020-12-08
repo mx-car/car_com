@@ -7,10 +7,13 @@
 #include <iostream>
 #endif
 
+#include <car/com/objects/time.h>
+
 namespace car {
 namespace com {
 namespace objects {
 
+    
 class  Pose {
 public:
     Pose() : x ( 0 ), y ( 0 ), theta ( 0 ) {};
