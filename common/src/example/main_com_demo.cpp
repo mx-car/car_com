@@ -123,7 +123,9 @@ int main ( int argc, char* argv[] )
 
     {
         /// stop motors
-        car::com::objects::Object o ( car::com::objects::CommandAckermann( 0, 0 ), car::com::objects::TYPE_COMMAND_ACKERMANN );
+        car::com::objects::CommandAckermann command_object( 0, 0 );
+        command_object.inhibitor = true;
+        car::com::objects::Object o ( command_object, car::com::objects::TYPE_COMMAND_ACKERMANN );
         serial_arduino.addObject ( o );
     }
     sleep ( 1 );

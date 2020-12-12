@@ -25,13 +25,17 @@ static const int FRONT_WHEEL_RIGHT = 3;
 class  Wheel {
 public:
     Wheel() 
-    : target{0.0, 0.0}
+    : pwm{0.0, 0.0}
+    , target{0.0, 0.0}
     , angle{0.0, 0.0}
     , speed{0.0, 0.0}
     , torque{0.0, 0.0} {
     };
     Wheel ( float rotation, float steering){
         setTarget(rotation, steering);
+    }
+    void setPWM(float rotation, float steering){
+        pwm[ROTATION] = rotation, pwm[STEERING] = steering;
     }
     void setTarget(float rotation, float steering){
         target[ROTATION] = rotation, target[STEERING] = steering;
@@ -45,6 +49,7 @@ public:
     void setTorque(float rotation, float steering){
         torque[ROTATION] = rotation, torque[STEERING] = steering;
     }
+    float pwm[2];            /// currently appied power -1.0 to +1.0
     float target[2];         /// target values dimensionless
     float angle[2];          /// [rad] absolute angles. Wheel positon and steering angle
     float speed[2];          /// [rad/s] speed. Wheel and steering speed 
