@@ -1,2 +1,2 @@
 add_subdirectory(car)
-add_subdirectory(example)
+add_subdirectory(examples)

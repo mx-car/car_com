@@ -5,7 +5,8 @@
 #include <car/com/objects/pose.h>
 #include <car/com/objects/text.h>
 #include <car/com/objects/twist.h>
-#include <car/com/objects/config_ackermann.h>
+#include <car/com/objects/ackermann_config.h>
+#include <car/com/objects/ackermann_rear_wheel_drive.h>
 #include <car/com/objects/command_ackermann.h>
 #include <car/com/objects/state_ackermann.h>
 #include <cstdio>
@@ -24,6 +25,7 @@ static const uint16_t TYPE_POSE = 200;
 static const uint16_t TYPE_MOTION_POSE_ESTIMATED = 201;
 static const uint16_t TYPE_MOTION_POSE_COVARIANCE_ESTIMATED = 251;
 static const uint16_t TYPE_ACKERMANN_CONFIG = 400;
+static const uint16_t TYPE_ACKERMANN_REAR_WHEEL_DRIVE = 401;
 static const uint16_t TYPE_MOTOR = 500;
 static const uint16_t TYPE_MOTOR_STATE = 501;
 static const uint16_t TYPE_MOTOR_PID = 502;

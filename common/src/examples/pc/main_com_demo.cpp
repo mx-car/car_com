@@ -32,9 +32,10 @@ void callback ( car::com::Message &header,  car::com::Objects & objects )
     for ( car::com::Objects::iterator it=objects.begin(); it!=objects.end(); ++it ) {
         car::com::objects::Object &object = it->second;
         switch ( it->first ) {
-        case car::com::objects::TYPE_SYNC_REQUEST:
+        case car::com::objects::TYPE_SYNC_REQUEST: {
             std::cout << "Sync request" << std::endl;
-            break;
+        }
+        break;
         case car::com::objects::TYPE_TEXT: {
             car::com::objects::Text text;
             object.get ( text );
@@ -51,20 +52,26 @@ void callback ( car::com::Message &header,  car::com::Objects & objects )
             car::com::objects::CommandAckermann cmd;
             object.get ( cmd );
             std::cout << "CommandAckermann: " << cmd.getToStringReadable() << std::endl;
-        break;
         }
+        break;
         case car::com::objects::TYPE_CONFIG_ACKERMANN: {
-            car::com::objects::ConfigAckermann config;
+            car::com::objects::AckermannConfig config;
             object.get ( config );
-            std::cout << "ConfigAckermann : " << config.getToStringReadable() << std::endl;
-        break;
+            std::cout << "AckermannConfig : " << config.getToStringReadable() << std::endl;
         }
+        break;
+        case car::com::objects::TYPE_ACKERMANN_REAR_WHEEL_DRIVE: {
+            car::com::objects::AckermannRearWheelDrive cmd;
+            object.get ( cmd );
+            std::cout << "AckermannRearWheelDrive : " << cmd.getToStringReadable() << std::endl;
+        }
+        break;
         case car::com::objects::TYPE_ARRAY_4N: {
             car::com::objects::Array<4> array;
             object.get ( array );
             std::cout << "Array<4> : " << array << std::endl;
-        break;
         }
+        break;
         default:
             std::cout << "Type id: " << object.type << ", of size: " << object.size << std::endl;
         }
@@ -105,16 +112,16 @@ int main ( int argc, char* argv[] )
     std::signal ( SIGINT, signal_handler );
 
     /// send command
-    car::com::objects::CommandAckermann command_object( params.rps, params.steering );
-    car::com::objects::ConfigAckermann config_ackermann(params.wheel_diameter, params.wheel_displacement, params.axis_displacement );
+    car::com::objects::AckermannRearWheelDrive ackermann_rear_wheel_drive( params.rps, params.rps, params.steering );
+    car::com::objects::AckermannConfig ackermann_config(params.wheel_diameter, params.wheel_displacement, params.axis_displacement );
 
     auto  callback_fnc ( std::bind ( &callback, std::placeholders::_1,  std::placeholders::_2 ) );
     serial_arduino.init ( params.serial, callback_fnc );
     sleep ( 1 );
     {
 
-        serial_arduino.addObject ( car::com::objects::Object (config_ackermann, car::com::objects::TYPE_CONFIG_ACKERMANN ) );
-        serial_arduino.addObject ( car::com::objects::Object( command_object, car::com::objects::TYPE_COMMAND_ACKERMANN ) );
+        serial_arduino.addObject ( car::com::objects::Object (ackermann_config, car::com::objects::TYPE_ACKERMANN_CONFIG ) );
+        serial_arduino.addObject ( car::com::objects::Object( ackermann_rear_wheel_drive, car::com::objects::TYPE_ACKERMANN_REAR_WHEEL_DRIVE ) );
 
     }
     while ( gSignalStatus == 0 ) {

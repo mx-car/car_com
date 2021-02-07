@@ -29,6 +29,16 @@ private:
     static bool CLOCK_SYNC;
 public:
     Time() : sec ( 0 ), nsec ( 0 ) {};
+    Time(bool now) : sec ( 0 ), nsec ( 0 ) {
+        if(now) {
+#if defined(__amd64__)
+        this->from(Clock::now());
+#else
+        sec = OFFSET.sec, nsec = OFFSET.nsec;
+        this->add_microseconds(micros());
+#endif
+        }
+    };
     Time ( int32_t sec, int32_t nsec )  :sec ( sec ), nsec ( nsec ) {};
     int32_t sec;      /// seconds (stamp_secs) since epoch
     int32_t nsec;     /// nanoseconds = 0.000000001 sec since stamp_secsf

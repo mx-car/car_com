@@ -25,6 +25,11 @@ public:
     void set(float velocity, float rotoation){
         v = velocity, w = rotoation;
     }
+    template <class T>
+    void set(T o){
+        v = o.v;
+        w = o.w;
+    }
     float v;
     float w;
 #if defined(__amd64__)
