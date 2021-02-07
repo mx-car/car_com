@@ -112,8 +112,8 @@ int main ( int argc, char* argv[] )
     std::signal ( SIGINT, signal_handler );
 
     /// send command
-    car::com::objects::AckermannRearWheelDrive ackermann_rear_wheel_drive( params.rps, params.rps, params.steering );
     car::com::objects::AckermannConfig ackermann_config(params.wheel_diameter, params.wheel_displacement, params.axis_displacement );
+    car::com::objects::AckermannRearWheelDrive ackermann_rear_wheel_drive( params.rps, params.rps, params.steering );
 
     auto  callback_fnc ( std::bind ( &callback, std::placeholders::_1,  std::placeholders::_2 ) );
     serial_arduino.init ( params.serial, callback_fnc );
@@ -130,9 +130,8 @@ int main ( int argc, char* argv[] )
 
     {
         /// stop motors
-        car::com::objects::CommandAckermann command_object( 0, 0 );
-        command_object.inhibitor = true;
-        car::com::objects::Object o ( command_object, car::com::objects::TYPE_COMMAND_ACKERMANN );
+        car::com::objects::AckermannRearWheelDrive ackermann_rear_wheel_drive( 0, 0, 0 );
+        car::com::objects::Object o ( ackermann_rear_wheel_drive, car::com::objects::TYPE_ACKERMANN_REAR_WHEEL_DRIVE );
         serial_arduino.addObject ( o );
     }
     sleep ( 1 );
