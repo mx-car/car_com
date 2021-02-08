@@ -1,5 +1,5 @@
-#ifndef CAR_COM_OBJECTS_ACKERMANNREARWHEELDRIVE_H
-#define CAR_COM_OBJECTS_ACKERMANNREARWHEELDRIVE_H
+#ifndef CAR_COM_OBJECTS_ACKERMANNSTATE_H
+#define CAR_COM_OBJECTS_ACKERMANNSTATE_H
 
 
 #include <cstdint>
@@ -15,21 +15,21 @@ namespace car {
 namespace com {
 namespace objects {
 
-class  AckermannRearWheelDrive {
+class  AckermannState {
 public:
     static const int LEFT = 0;
     static const int RIGHT = 1;
-    AckermannRearWheelDrive()
+    AckermannState()
         : stamp()
         , v{0, 0}
         , steering(0.) {
     };
-    AckermannRearWheelDrive (const AckermannRearWheelDrive &o)
+    AckermannState (const AckermannState &o)
         : stamp(o.stamp)
         , v{o.v[LEFT], o.v[RIGHT]}
         , steering(o.steering) {};
 
-    AckermannRearWheelDrive (float v_left, float v_right, float steering, bool now = true)
+    AckermannState (float v_left, float v_right, float steering, bool now = true)
         : stamp(now)
         , v{v_left, v_right}
         , steering(steering) {}
@@ -49,7 +49,7 @@ public:
     float steering;
 
 #if defined(__amd64__)
-    friend std::ostream &operator << ( std::ostream &os, const AckermannRearWheelDrive &o ) {
+    friend std::ostream &operator << ( std::ostream &os, const AckermannState &o ) {
         os << o.getToString();
         return os;
     };
@@ -70,4 +70,4 @@ public:
 };
 
 
-#endif // CAR_COM_OBJECTS_ACKERMANNREARWHEELDRIVE_H
+#endif // CAR_COM_OBJECTS_ACKERMANNSTATE_H

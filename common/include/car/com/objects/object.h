@@ -6,7 +6,7 @@
 #include <car/com/objects/text.h>
 #include <car/com/objects/twist.h>
 #include <car/com/objects/ackermann_config.h>
-#include <car/com/objects/ackermann_rear_wheel_drive.h>
+#include <car/com/objects/ackermann_state.h>
 #include <car/com/objects/command_ackermann.h>
 #include <car/com/objects/state_ackermann.h>
 #include <cstdio>
@@ -25,7 +25,7 @@ static const uint16_t TYPE_POSE = 200;
 static const uint16_t TYPE_MOTION_POSE_ESTIMATED = 201;
 static const uint16_t TYPE_MOTION_POSE_COVARIANCE_ESTIMATED = 251;
 static const uint16_t TYPE_ACKERMANN_CONFIG = 400;
-static const uint16_t TYPE_ACKERMANN_REAR_WHEEL_DRIVE = 401;
+static const uint16_t TYPE_ACKERMANN_STATE = 401;
 static const uint16_t TYPE_MOTOR = 500;
 static const uint16_t TYPE_MOTOR_STATE = 501;
 static const uint16_t TYPE_MOTOR_PID = 502;
@@ -46,8 +46,10 @@ static const uint16_t TYPE_RAW_COMMAND = 6010;
 static const uint16_t TYPE_STATE_ACKERMANN = 6020;
 static const uint16_t TYPE_COMMAND_ACKERMANN = 6030;
 static const uint16_t TYPE_CONFIG_ACKERMANN = 6040;
-static const uint16_t TYPE_ARRAY_4N = 6050;
-static const uint16_t TYPE_ARRAY_8N = 6060;
+static const uint16_t TYPE_ARRAY16SC4 = 6050;
+static const uint16_t TYPE_ARRAY16SC8 = 6051;
+static const uint16_t TYPE_ARRAY16FC4 = 6052;
+static const uint16_t TYPE_ARRAY16FC8 = 6053;
 
 typedef uint16_t ObjectType;
 
@@ -89,7 +91,7 @@ public:
     }
     template <class T> T& get ( T& des ) const {
         if ( ( sizeof ( T ) == size ) && ( size > 0 ) ) {
-            memcpy ( &des, buffer, this->size );
+            memcpy ( (void*) &des, buffer, this->size );
         }
         return des;
     }
