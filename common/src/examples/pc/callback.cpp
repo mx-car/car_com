@@ -1,0 +1,76 @@
+#include <car/com/pc/interface.h>
+
+extern car::com::pc::SerialInterface serial_arduino;
+extern car::com::objects::AckermannState ackermann_command;
+
+void callback ( car::com::Message &header,  car::com::Objects & objects )
+{
+
+    std::cout << std::endl << "Header: "  << header.getToStringReadable() << " with " << objects.size()  << " objects" << std::endl;
+    for ( car::com::Objects::iterator it=objects.begin(); it!=objects.end(); ++it ) {
+        car::com::objects::Object &object = it->second;
+        switch ( it->first ) {
+        case car::com::objects::TYPE_SYNC_REQUEST: {
+            std::cout << "Sync request" << std::endl;
+        }
+        break;
+        case car::com::objects::TYPE_TEXT: {
+            car::com::objects::Text text;
+            object.get ( text );
+            std::cout << "Text: " << text.txt << std::endl;
+        }
+        break;
+        case car::com::objects::TYPE_STATE_ACKERMANN: {
+            car::com::objects::StateAckermann state;
+            object.get ( state );
+            std::cout << "StateAckermann  : " << state.getToStringReadable() << std::endl;
+        }
+        break;
+        case car::com::objects::TYPE_COMMAND_ACKERMANN: {
+            car::com::objects::CommandAckermann cmd;
+            object.get ( cmd );
+            std::cout << "CommandAckermann: " << cmd.getToStringReadable() << std::endl;
+        }
+        break;
+        case car::com::objects::TYPE_CONFIG_ACKERMANN: {
+            car::com::objects::AckermannConfig config;
+            object.get ( config );
+            std::cout << "AckermannConfig : " << config.getToStringReadable() << std::endl;
+        }
+        break;
+        case car::com::objects::TYPE_ACKERMANN_STATE: {
+            car::com::objects::AckermannState cmd;
+            object.get ( cmd );
+            std::cout << "AckermannState : " << cmd.getToStringReadable() << std::endl;
+        }
+        break;
+        case car::com::objects::TYPE_ARRAY16SC4: {
+            car::com::objects::Array16SC4 array;
+            object.get ( array );
+            std::cout << "Array16SC4 : " << array << std::endl;
+        }
+        break;
+        case car::com::objects::TYPE_ARRAY16SC8: {
+            car::com::objects::Array16SC8 array;
+            object.get ( array );
+            std::cout << "Array16SC8 : " << array << std::endl;
+        }
+        break;
+        case car::com::objects::TYPE_ARRAY16FC4: {
+            car::com::objects::Array16FC4 array;
+            object.get ( array );
+            std::cout << "Array16FC4 : " << array << std::endl;
+        }
+        break;
+        case car::com::objects::TYPE_ARRAY16FC8: {
+            car::com::objects::Array16FC8 array;
+            object.get ( array );
+            std::cout << "Array16FC8 : " << array << std::endl;
+        }
+        break;
+        default:
+            std::cout << "Type id: " << object.type << ", of size: " << object.size << std::endl;
+        }
+    }
+    serial_arduino.addObject ( car::com::objects::Object( ackermann_command, car::com::objects::TYPE_ACKERMANN_CMD ) );
+}
