@@ -3,10 +3,13 @@
 extern car::com::pc::SerialInterface serial_arduino;
 extern car::com::objects::AckermannState ackermann_command;
 
+car::com::objects::Time tprev;
 void callback ( car::com::Message &header,  car::com::Objects & objects )
 {
-
-    std::cout << std::endl << "Header: "  << header.getToStringReadable() << " with " << objects.size()  << " objects" << std::endl;
+    car::com::objects::Time tnow = car::com::objects::Time::now();
+    car::com::objects::Duration dt = tnow - tprev;
+    tprev = tnow;
+    std::cout << std::endl << "Header: "  << header.getToStringReadable() << " with " << objects.size()  << " objects, " << std::fixed << std::setw( 5 ) << std::setprecision(3) << dt.toSec() << "sec" << std::endl;
     for ( car::com::Objects::iterator it=objects.begin(); it!=objects.end(); ++it ) {
         car::com::objects::Object &object = it->second;
         switch ( it->first ) {
@@ -42,6 +45,12 @@ void callback ( car::com::Message &header,  car::com::Objects & objects )
             car::com::objects::AckermannState cmd;
             object.get ( cmd );
             std::cout << "AckermannState : " << cmd.getToStringReadable() << std::endl;
+        }
+        break;
+        case car::com::objects::TYPE_ACKERMANN_CMD: {
+            car::com::objects::AckermannState cmd;
+            object.get ( cmd );
+            std::cout << "AckermannCommand : " << cmd.getToStringReadable() << std::endl;
         }
         break;
         case car::com::objects::TYPE_ARRAY16SC4: {

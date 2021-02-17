@@ -23,19 +23,32 @@ using Clock = std::chrono::high_resolution_clock;
 using TimePoint = std::chrono::time_point<Clock>;
 #endif
 
+class  Duration {
+public:
+    int32_t sec;      /// seconds (stamp_secs) since epoch
+    int32_t nsec;     /// nanoseconds = 0.000000001 sec since stamp_secsf
+    Duration() : sec ( 0 ), nsec ( 0 ) {};
+    Duration ( int32_t sec, int32_t nsec )  :sec ( sec ), nsec ( nsec ) {};
+    float toSec() {
+        float second = ((float) nsec) / 1000000000. + (float) sec;
+        return second;
+    }
+};
+
 class  Time {
 private:
     static Time OFFSET;
+    static uint32_t OFFSET_MICROS;
     static bool CLOCK_SYNC;
 public:
     Time() : sec ( 0 ), nsec ( 0 ) {};
     Time(bool now) : sec ( 0 ), nsec ( 0 ) {
         if(now) {
 #if defined(__amd64__)
-        this->from(Clock::now());
+            this->from(Clock::now());
 #else
-        sec = OFFSET.sec, nsec = OFFSET.nsec;
-        this->add_microseconds(micros());
+            sec = OFFSET.sec, nsec = OFFSET.nsec;
+            this->add_microseconds(micros());
 #endif
         }
     };
@@ -76,7 +89,7 @@ public:
         des = TimePoint{} + std::chrono::seconds(sec) + std::chrono::nanoseconds(nsec);
     }
     template<typename TimeObject>
-    void set(const TimeObject &s){
+    void set(const TimeObject &s) {
         sec = s.sec, nsec = s.nsec;
     }
 #endif
@@ -93,15 +106,24 @@ public:
             OFFSET.sec = OFFSET.sec - 1;
             OFFSET.nsec = 1000000000UL + OFFSET.nsec;
         }
+        OFFSET_MICROS = OFFSET.nsec/1000UL + OFFSET.sec * 1000000UL;
     }
     /**
-     * returns the time based on the micro clock
+     * returns the time based on the micro clock adding the mu clock offset
      * @param microsecond
      **/
     static Time fromMicros(int64_t microsecond) {
         Time t(OFFSET.sec, OFFSET.nsec);
         t.add_microseconds(microsecond);
         return t;
+    }
+    /**
+     * returns the time based on the micro clock substracting the mu clock offset
+     * @param t
+     **/
+    static uint32_t toMicros(const Time& t) {
+        uint32_t microsecond = t.nsec/1000UL + t.sec * 1000000UL - OFFSET_MICROS;
+        return microsecond;
     }
 #endif
 
@@ -131,6 +153,18 @@ public:
         return std::string ( buf );
     }
 #endif
+
+
+    friend Duration operator-(const Time &lhs, const Time &rhs)
+    {
+        Duration d(lhs.sec - rhs.sec, lhs.nsec - rhs.nsec);
+        /*
+        int64_t dnsec = d.nsec % 1000000000UL;
+        d.sec += dnsec / 1000000000UL;
+        d.nsec -= dnsec;
+        */
+        return d;
+    }
 };
 };
 };

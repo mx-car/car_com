@@ -42,16 +42,19 @@ static const uint16_t TYPE_COMMAND_ACTUATORS = 5010;
 static const uint16_t TYPE_COMMAND_MOTOR_PID = 5030;
 static const uint16_t TYPE_COMMAND_SERVO_PID = 5040;
 static const uint16_t TYPE_COMMAND_ACKERMANN_CONFIG = 5050;
+static const uint16_t TYPE_COMMAND_DELAY_MICROS = 5060;
 
 static const uint16_t TYPE_STATE_RAW = 6000;
 static const uint16_t TYPE_RAW_COMMAND = 6010;
 static const uint16_t TYPE_STATE_ACKERMANN = 6020;
 static const uint16_t TYPE_COMMAND_ACKERMANN = 6030;
 static const uint16_t TYPE_CONFIG_ACKERMANN = 6040;
-static const uint16_t TYPE_ARRAY16SC4 = 6050;
-static const uint16_t TYPE_ARRAY16SC8 = 6051;
-static const uint16_t TYPE_ARRAY16FC4 = 6052;
-static const uint16_t TYPE_ARRAY16FC8 = 6053;
+static const uint16_t TYPE_ARRAY16SC1 = 6101;
+static const uint16_t TYPE_ARRAY16SC4 = 6104;
+static const uint16_t TYPE_ARRAY16SC8 = 6108;
+static const uint16_t TYPE_ARRAY16FC1 = 6201;
+static const uint16_t TYPE_ARRAY16FC4 = 6204;
+static const uint16_t TYPE_ARRAY16FC8 = 6208;
 
 typedef uint16_t ObjectType;
 

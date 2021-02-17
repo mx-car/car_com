@@ -47,6 +47,7 @@ void SerialInterface::serial_monitor ( const std::string& devname, unsigned int 
                 if (serial_timeout_->readEscaped ( ( char* ) &msg_rx_, sizeof ( MessageHeader ) ) == -1) goto startMessageReceive;
                 if ( msg_rx_.size < Message::MAX_BUFFER_SIZE ) {
                     if (serial_timeout_->readEscaped ( ( char* ) &msg_rx_.buffer[0], msg_rx_.size ) == -1) goto startMessageReceive;
+                    if (msg_rx_.size == 0) goto startMessageReceive;
                     while ( msg_rx_.pop_object ( object ).isValid() ) {
                         switch ( object.type ) {
                         case car::com::objects::TYPE_SYNC_REQUEST:

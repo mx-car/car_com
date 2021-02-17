@@ -36,6 +36,15 @@ public:
         }
         return bytes_remaining;
     }
+    int print (const char *format, ...) {
+        #include <stdarg.h>     /* va_list, va_start, va_arg, va_end */
+        va_list arg;
+        int done;
+        va_start (arg, format);
+        done = sprintf(txt, format, arg);
+        va_end (arg);
+        return MAX_BUFFER_SIZE - done; 
+    }
 
     int size() {
         return strlen ( txt );

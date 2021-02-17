@@ -28,6 +28,7 @@ struct Parameters {
     float axis_displacement;
     int axis_steering;
     int axis_velocity;
+    float max_velocity;
     int button_uncouble;
     int dead_men_button;
     std::string device;
@@ -54,7 +55,8 @@ int main ( int argc, char* argv[] )
     ( "wheel_displacement", po::value<float> ( &params.wheel_displacement )->default_value ( 0.153 ), "wheel displacement [m]" )
     ( "axis_displacement", po::value<float> ( &params.axis_displacement )->default_value ( 0.26 ), "axis displacement [m]" )
     ( "axis_steering", po::value<int> ( &params.axis_steering )->default_value ( 0 ), "Steering Axis" )
-    ( "axis_velocity", po::value<int> ( &params.axis_velocity )->default_value ( 2 ), "Velocity Axis" )
+    ( "axis_velocity", po::value<int> ( &params.axis_velocity )->default_value ( 4 ), "Velocity Axis" )
+    ( "max_velocity", po::value<float> ( &params.max_velocity )->default_value ( 5. ), "Velocity max" )
     ( "button_uncouble", po::value<int> ( &params.button_uncouble )->default_value ( 4 ), "Uncouble motors" )
     ( "dead_men_button", po::value<int> ( &params.dead_men_button )->default_value ( 5 ), "Dead Men's Button" )
     ( "device,d", po::value<std::string> ( &params.device )->default_value ( "/dev/input/js0" ), "joystick device" );
@@ -84,28 +86,30 @@ int main ( int argc, char* argv[] )
     {
         serial_arduino.addObject ( car::com::objects::Object (ackermann_command, car::com::objects::TYPE_ACKERMANN_CONFIG ) );
         serial_arduino.addObject ( car::com::objects::Object( ackermann_state, car::com::objects::TYPE_ACKERMANN_CMD ) );
-
     }
     mx::Joystick joy;
 
-    if(joy.init(params.device) == -1) {
+    if(joy.open(params.device) == -1) {
         printf("Could not open joystick");
         return 0;
     };
 
     /* This loop will exit if the controller is unplugged. */
     joy.start();
-
+    mx::Joystick::Values gamepad;
     while ( gSignalStatus == 0 )
     {
-        ackermann_command.coubled[0] = (joy.button(params.button_uncouble).value == 0);
-        ackermann_command.coubled[1] = (joy.button(params.button_uncouble).value == 0);
-        ackermann_command.v[0] = ((float) joy.axis(params.axis_velocity).x) / ((float) std::numeric_limits<short>::max()) * 3.;
-        ackermann_command.v[1] = -ackermann_command.v[0];
+        joy.get(gamepad);
+        ackermann_command.coubled[0] = (gamepad.button(params.button_uncouble) == 0);
+        ackermann_command.coubled[1] = (gamepad.button(params.button_uncouble) == 0);
+        ackermann_command.v[0] = +params.max_velocity * gamepad.axis(params.axis_velocity);
+        ackermann_command.v[1] = -params.max_velocity * gamepad.axis(params.axis_velocity);
+        ackermann_command.steering = gamepad.axis(params.axis_steering);
+        ackermann_command.stamp = car::com::objects::Time::now();
+        usleep(1000);
     }
-
-
-
+    joy.stop();
+    joy.get_future().wait();
     {
         /// stop motors
         ackermann_command.set(0, 0, 0, false );
