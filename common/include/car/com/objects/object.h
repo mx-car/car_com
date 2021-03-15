@@ -10,6 +10,7 @@
 #include <car/com/objects/ackermann_state.h>
 #include <car/com/objects/command_ackermann.h>
 #include <car/com/objects/state_ackermann.h>
+#include <car/com/objects/control_config.h>
 #include <cstdio>
 
 namespace car {
@@ -25,6 +26,7 @@ static const uint16_t TYPE_TEXT = 100;
 static const uint16_t TYPE_POSE = 200;
 static const uint16_t TYPE_MOTION_POSE_ESTIMATED = 201;
 static const uint16_t TYPE_MOTION_POSE_COVARIANCE_ESTIMATED = 251;
+static const uint16_t TYPE_POSE_STAMPED = 210;
 static const uint16_t TYPE_ACKERMANN_CONFIG = 400;
 static const uint16_t TYPE_ACKERMANN_CMD = 401;
 static const uint16_t TYPE_ACKERMANN_STATE = 402;
@@ -43,6 +45,7 @@ static const uint16_t TYPE_COMMAND_MOTOR_PID = 5030;
 static const uint16_t TYPE_COMMAND_SERVO_PID = 5040;
 static const uint16_t TYPE_COMMAND_ACKERMANN_CONFIG = 5050;
 static const uint16_t TYPE_COMMAND_DELAY_MICROS = 5060;
+static const uint16_t TYPE_CONTROL_CONFIG = 5070;
 
 static const uint16_t TYPE_STATE_RAW = 6000;
 static const uint16_t TYPE_RAW_COMMAND = 6010;

@@ -35,7 +35,7 @@ void callback ( car::com::Message &header,  car::com::Objects & objects )
             std::cout << "CommandAckermann: " << cmd.getToStringReadable() << std::endl;
         }
         break;
-        case car::com::objects::TYPE_CONFIG_ACKERMANN: {
+        case car::com::objects::TYPE_ACKERMANN_CONFIG: {
             car::com::objects::AckermannConfig config;
             object.get ( config );
             std::cout << "AckermannConfig : " << config.getToStringReadable() << std::endl;
@@ -51,6 +51,12 @@ void callback ( car::com::Message &header,  car::com::Objects & objects )
             car::com::objects::AckermannState cmd;
             object.get ( cmd );
             std::cout << "AckermannCommand : " << cmd.getToStringReadable() << std::endl;
+        }
+        break;
+        case car::com::objects::TYPE_POSE_STAMPED: {
+            car::com::objects::PoseStamped pose;
+            object.get ( pose );
+            std::cout << "PoseStamped : " << pose.getToStringReadable() << std::endl;
         }
         break;
         case car::com::objects::TYPE_ARRAY16SC4: {
@@ -75,6 +81,11 @@ void callback ( car::com::Message &header,  car::com::Objects & objects )
             car::com::objects::Array16FC8 array;
             object.get ( array );
             std::cout << "Array16FC8 : " << array << std::endl;
+        }
+        case car::com::objects::TYPE_CONTROL_CONFIG: {
+            car::com::objects::ControlConfig o;
+            object.get ( o );
+            std::cout << "ControlConfig : " << o << std::endl;
         }
         break;
         default:
