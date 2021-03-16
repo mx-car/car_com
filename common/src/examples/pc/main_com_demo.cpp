@@ -63,7 +63,7 @@ int main ( int argc, char* argv[] )
 
     /// send command
     car::com::objects::AckermannConfig ackermann_config(params.wheel_diameter, params.wheel_displacement, params.axis_displacement );
-    ackermann_command.set( params.rps, params.rps, params.steering );
+    ackermann_command.set( params.rps, params.rps, params.steering, car::com::objects::AckermannState::MODE_VELOCITY );
 
     auto  callback_fnc ( std::bind ( &callback, std::placeholders::_1,  std::placeholders::_2 ) );
     serial_arduino.init ( params.serial, callback_fnc );
@@ -80,7 +80,7 @@ int main ( int argc, char* argv[] )
 
     {
         /// stop motors
-        ackermann_command.set(0, 0, 0, false );
+        ackermann_command.set(0, 0, 0, ackermann_command.MODE_PWM, false );
         car::com::objects::Object o ( ackermann_command, car::com::objects::TYPE_ACKERMANN_CMD );
         serial_arduino.addObject ( o );
     }

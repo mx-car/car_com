@@ -93,4 +93,5 @@ void callback ( car::com::Message &header,  car::com::Objects & objects )
         }
     }
     serial_arduino.addObject ( car::com::objects::Object( ackermann_command, car::com::objects::TYPE_ACKERMANN_CMD ) );
+    std::cout << "ackermann_command : " << ackermann_command.getToStringReadable() << std::endl;
 }

@@ -20,8 +20,6 @@ void callback ( car::com::Message &header,  car::com::Objects & objects );
 struct Parameters {
     static int loop;
     car::com::pc::Parameters serial;
-    float rps;
-    float steering;
     bool decouble;
     float wheel_diameter;
     float wheel_displacement;
@@ -29,8 +27,8 @@ struct Parameters {
     int axis_steering;
     int axis_velocity;
     float max_velocity;
-    int button_uncouble;
-    int dead_men_button;
+    int button_couble;
+    int button_velocity_mode;
     std::string device;
 };
 
@@ -49,16 +47,14 @@ int main ( int argc, char* argv[] )
     ( "port,m", po::value<std::string> ( &params.serial.port )->default_value ( "/dev/ttyACM0" ), "serial port" )
     ( "baudrate,b", po::value<int> ( &params.serial.baudrate )->default_value ( 115200 ), "baudrate" )
     ( "decouble,c", po::value<bool> ( &params.decouble )->default_value ( false ),  "decouble motors" )
-    ( "rps,r", po::value<float> ( &params.rps )->default_value ( 0 ), "motor power between -1.0 and 1.0" )
-    ( "steering,s", po::value<float> ( &params.steering )->default_value ( 90 ), "servo steering between -1.0 and 1.0" )
     ( "wheel_diameter", po::value<float> ( &params.wheel_diameter )->default_value ( 0.065 ), "wheel diameter [m]" )
     ( "wheel_displacement", po::value<float> ( &params.wheel_displacement )->default_value ( 0.153 ), "wheel displacement [m]" )
     ( "axis_displacement", po::value<float> ( &params.axis_displacement )->default_value ( 0.26 ), "axis displacement [m]" )
-    ( "axis_steering", po::value<int> ( &params.axis_steering )->default_value ( 0 ), "Steering Axis" )
-    ( "axis_velocity", po::value<int> ( &params.axis_velocity )->default_value ( 4 ), "Velocity Axis" )
-    ( "max_velocity", po::value<float> ( &params.max_velocity )->default_value ( 5. ), "Velocity max" )
-    ( "button_uncouble", po::value<int> ( &params.button_uncouble )->default_value ( 4 ), "Uncouble motors" )
-    ( "dead_men_button", po::value<int> ( &params.dead_men_button )->default_value ( 5 ), "Dead Men's Button" )
+    ( "max_velocity", po::value<float> ( &params.max_velocity )->default_value ( 1.0 ), "velocity max" )
+    ( "axis_steering", po::value<int> ( &params.axis_steering )->default_value ( 3 ), "steering axis" )
+    ( "axis_velocity", po::value<int> ( &params.axis_velocity )->default_value ( 4 ), "velocity axis" )
+    ( "button_couble", po::value<int> ( &params.button_couble )->default_value ( 5 ), "couble motors" )
+    ( "button_velocity_mode", po::value<int> ( &params.button_velocity_mode )->default_value ( 4 ), "velocity mode button" )
     ( "device,d", po::value<std::string> ( &params.device )->default_value ( "/dev/input/js0" ), "joystick device" );
 
     po::variables_map vm;
@@ -77,15 +73,15 @@ int main ( int argc, char* argv[] )
 
     std::signal ( SIGINT, signal_handler );
     /// send command
-    ackermann_command.set(params.wheel_diameter, params.wheel_displacement, params.axis_displacement );
-    car::com::objects::AckermannState ackermann_state( params.rps, params.rps, params.steering );
+    car::com::objects::AckermannConfig ackermann_config(params.wheel_diameter, params.wheel_displacement, params.axis_displacement );
+    ackermann_command.set( 0, 0, 0, ackermann_command.MODE_PWM );
 
     auto  callback_fnc ( std::bind ( &callback, std::placeholders::_1,  std::placeholders::_2 ) );
     serial_arduino.init ( params.serial, callback_fnc );
     sleep ( 1 );
     {
-        serial_arduino.addObject ( car::com::objects::Object (ackermann_command, car::com::objects::TYPE_ACKERMANN_CONFIG ) );
-        serial_arduino.addObject ( car::com::objects::Object( ackermann_state, car::com::objects::TYPE_ACKERMANN_CMD ) );
+        serial_arduino.addObject ( car::com::objects::Object (ackermann_config, car::com::objects::TYPE_ACKERMANN_CONFIG ) );
+        serial_arduino.addObject ( car::com::objects::Object( ackermann_command, car::com::objects::TYPE_ACKERMANN_CMD ) );
     }
     mx::Joystick joy;
 
@@ -100,19 +96,22 @@ int main ( int argc, char* argv[] )
     while ( gSignalStatus == 0 )
     {
         joy.get(gamepad);
-        ackermann_command.coubled[0] = (gamepad.button(params.button_uncouble) == 0);
-        ackermann_command.coubled[1] = (gamepad.button(params.button_uncouble) == 0);
-        ackermann_command.v[0] = +params.max_velocity * gamepad.axis(params.axis_velocity);
-        ackermann_command.v[1] = -params.max_velocity * gamepad.axis(params.axis_velocity);
-        ackermann_command.steering = gamepad.axis(params.axis_steering);
+        ackermann_command.coubled[0] = gamepad.button(params.button_couble);
+        ackermann_command.coubled[1] = gamepad.button(params.button_couble);
+        ackermann_command.v[0] = +gamepad.axis(params.axis_velocity) * params.max_velocity;
+        ackermann_command.v[1] = -gamepad.axis(params.axis_velocity) * params.max_velocity;
+        ackermann_command.steering = -gamepad.axis(params.axis_steering);
         ackermann_command.stamp = car::com::objects::Time::now();
+        
+        ackermann_command.mode = car::com::objects::AckermannState::MODE_PWM;
+        if(gamepad.button(params.button_velocity_mode)) ackermann_command.mode = car::com::objects::AckermannState::MODE_VELOCITY;
         usleep(1000);
     }
     joy.stop();
     joy.get_future().wait();
     {
         /// stop motors
-        ackermann_command.set(0, 0, 0, false );
+        ackermann_command.set(0, 0, 0, car::com::objects::AckermannState::MODE_PWM, false );
         car::com::objects::Object o ( ackermann_command, car::com::objects::TYPE_ACKERMANN_CMD );
         serial_arduino.addObject ( o );
     }
