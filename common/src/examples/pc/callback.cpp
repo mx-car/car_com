@@ -83,9 +83,9 @@ void callback ( car::com::Message &header,  car::com::Objects & objects )
             std::cout << "Array16FC8 : " << array << std::endl;
         }
         case car::com::objects::TYPE_CONTROL_CONFIG: {
-            car::com::objects::ControlConfig o;
+            car::com::objects::ControlParameter o;
             object.get ( o );
-            std::cout << "ControlConfig : " << o << std::endl;
+            std::cout << "ControlParameter : " << o << std::endl;
         }
         break;
         default:

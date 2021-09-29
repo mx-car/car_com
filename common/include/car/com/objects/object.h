@@ -10,7 +10,7 @@
 #include <car/com/objects/ackermann_state.h>
 #include <car/com/objects/command_ackermann.h>
 #include <car/com/objects/state_ackermann.h>
-#include <car/com/objects/control_config.h>
+#include <car/com/objects/control_parameters.h>
 #include <cstdio>
 
 namespace car {

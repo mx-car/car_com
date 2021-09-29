@@ -17,6 +17,8 @@ namespace objects {
 
 static const int LEFT = 0;
 static const int RIGHT = 1;
+static const int FORWARD = 0;
+static const int BACKWARD = 1;
 
 #if defined(__amd64__)
 using Clock = std::chrono::high_resolution_clock;
