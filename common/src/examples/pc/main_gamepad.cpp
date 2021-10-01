@@ -34,7 +34,9 @@ struct Parameters {
 
 Parameters params;
 car::com::pc::SerialInterface serial_arduino;
-car::com::objects::AckermannState ackermann_command;
+using namespace car::com::objects;
+AckermannState ackermann_command;
+ControlParameter control_parameter;
 
 
 int main ( int argc, char* argv[] )
@@ -73,15 +75,21 @@ int main ( int argc, char* argv[] )
 
     std::signal ( SIGINT, signal_handler );
     /// send command
-    car::com::objects::AckermannConfig ackermann_config(params.wheel_diameter, params.wheel_displacement, params.axis_displacement );
+    AckermannConfig ackermann_config(params.wheel_diameter, params.wheel_displacement, params.axis_displacement );
     ackermann_command.set( 0, 0, 0, ackermann_command.MODE_PWM );
 
     auto  callback_fnc ( std::bind ( &callback, std::placeholders::_1,  std::placeholders::_2 ) );
     serial_arduino.init ( params.serial, callback_fnc );
     sleep ( 1 );
     {
-        serial_arduino.addObject ( car::com::objects::Object (ackermann_config, car::com::objects::TYPE_ACKERMANN_CONFIG ) );
-        serial_arduino.addObject ( car::com::objects::Object( ackermann_command, car::com::objects::TYPE_ACKERMANN_CMD ) );
+        serial_arduino.addObject ( Object (ackermann_config, TYPE_ACKERMANN_CONFIG ) );
+        serial_arduino.addObject ( Object( ackermann_command, TYPE_ACKERMANN_CMD ) );
+    }
+    sleep(1);
+    {
+        
+        control_parameter = ControlParameter::get_default(ControlParameter::MXR02);
+        serial_arduino.addObject ( Object( control_parameter, TYPE_CONTROL_PARAMETER ) );
     }
     mx::Joystick joy;
 
@@ -101,18 +109,19 @@ int main ( int argc, char* argv[] )
         ackermann_command.v[0] = +gamepad.axis(params.axis_velocity) * params.max_velocity;
         ackermann_command.v[1] = -gamepad.axis(params.axis_velocity) * params.max_velocity;
         ackermann_command.steering = -gamepad.axis(params.axis_steering);
-        ackermann_command.stamp = car::com::objects::Time::now();
+        ackermann_command.stamp = Time::now();
         
-        ackermann_command.mode = car::com::objects::AckermannState::MODE_PWM;
-        if(gamepad.button(params.button_velocity_mode)) ackermann_command.mode = car::com::objects::AckermannState::MODE_VELOCITY;
+        ackermann_command.mode = AckermannState::MODE_PWM;
+        if(gamepad.button(params.button_velocity_mode)) ackermann_command.mode = AckermannState::MODE_VELOCITY;
+        
         usleep(1000);
     }
     joy.stop();
     joy.get_future().wait();
     {
         /// stop motors
-        ackermann_command.set(0, 0, 0, car::com::objects::AckermannState::MODE_PWM, false );
-        car::com::objects::Object o ( ackermann_command, car::com::objects::TYPE_ACKERMANN_CMD );
+        ackermann_command.set(0, 0, 0, AckermannState::MODE_PWM, false );
+        Object o ( ackermann_command, TYPE_ACKERMANN_CMD );
         serial_arduino.addObject ( o );
     }
     sleep ( 1 );

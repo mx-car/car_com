@@ -30,11 +30,17 @@ public:
     
     int16_t angle_offset[2];
     int16_t nr_of_coils;
+    bool operator==( const BLDCParameter &o ) const { 
+        return o.angle_offset[FORWARD] == angle_offset[FORWARD] && o.angle_offset[BACKWARD] == angle_offset[BACKWARD] && o.nr_of_coils == nr_of_coils ; 
+    }
+    bool operator!=( const BLDCParameter &o ) const { 
+        return o.angle_offset[FORWARD] != angle_offset[FORWARD] || o.angle_offset[BACKWARD] != angle_offset[BACKWARD] || o.nr_of_coils != nr_of_coils ; 
+    }
     
 #if defined(__amd64__)
     std::string getToString() const {
         char buf[0xFF];
-        sprintf ( buf, "[ %+3d, %+3d, %+2d]", angle_offset[FORWARD], angle_offset[BACKWARD], nr_of_coils);
+        sprintf ( buf, " %+3d, %+3d, %+2d", angle_offset[FORWARD], angle_offset[BACKWARD], nr_of_coils);
         return std::string ( buf );
     }
 #endif
@@ -51,10 +57,16 @@ public:
     float Kp;
     float Ki;
     float Kd;
+    bool operator==( const PIDParameter &o ) const { 
+        return o.dt == dt && o.min == min && o.max == max && o.min == min && o.Kp == Kp && o.Ki == Ki && o.Kd == Kd ; 
+    }
+    bool operator!=( const PIDParameter &o ) const { 
+        return o.dt != dt || o.min != min || o.max != max || o.min != min || o.Kp != Kp || o.Ki != Ki || o.Kd != Kd ; 
+    }
 #if defined(__amd64__)
     std::string getToString() const {
         char buf[0xFF];
-        sprintf ( buf, "[ %+4.3f, %+4.3f, %+4.3f, %+4.3f, %+4.3f, %+4.3f]", dt, min, max, Kp, Ki, Kd);
+        sprintf ( buf, " %+4.3f, %+4.3f, %+4.3f, %+4.3f, %+4.3f, %+4.3f", dt, min, max, Kp, Ki, Kd);
         return std::string ( buf );
     }
 #endif
@@ -86,16 +98,28 @@ public:
             case MXR01:
                 break;
             case MXR02:
-            case NA:
-            default:
                 config.bldc[LEFT]  = BLDCParameter(-65     , -65 - 90, 11);
                 config.bldc[RIGHT] = BLDCParameter(-80 + 90,      -80, 11);
+                
+                config.pid[LEFT] = PIDParameter(0.1, -1, 1, 0.2, 0.05, 0.01);
+                config.pid[RIGHT] = PIDParameter(0.1, -1, 1, 0.2, 0.05, 0.01);
+                break;
+            case NA:
+            default:
+                config.bldc[LEFT]  = BLDCParameter( 0  , -90, 11);
+                config.bldc[RIGHT] = BLDCParameter( +90,   0, 11);
                 
                 config.pid[LEFT] = PIDParameter(0.1, -1, 1, 0.2, 0.05, 0.01);
                 config.pid[RIGHT] = PIDParameter(0.1, -1, 1, 0.2, 0.05, 0.01);
                 
         }
         return config;
+    }
+    bool operator==( const ControlParameter &o ) const { 
+        return o.bldc[LEFT] == bldc[LEFT] && o.bldc[RIGHT] == bldc[RIGHT] && o.pid[LEFT] == pid[LEFT] && o.pid[RIGHT] == pid[RIGHT]; 
+    }
+    bool operator!=( const ControlParameter &o ) const { 
+        return o.bldc[LEFT] != bldc[LEFT] || o.bldc[RIGHT] != bldc[RIGHT] || o.pid[LEFT] != pid[LEFT] || o.pid[RIGHT] != pid[RIGHT]; 
     }
 
 #if defined(__amd64__)
@@ -105,12 +129,12 @@ public:
     };
     std::string getToString() const {
         char buf[0xFF];
-        sprintf ( buf, "[ %s, %s]",  pid[LEFT].getToString().c_str(), pid[RIGHT].getToString().c_str());
+        sprintf ( buf, "[[%s], [%s]], [ [%s], [%s]]",  bldc[LEFT].getToString().c_str(), bldc[RIGHT].getToString().c_str(), pid[LEFT].getToString().c_str(), pid[RIGHT].getToString().c_str());
         return std::string ( buf );
     }
     std::string getToStringReadable() const {
         char buf[0xFF];
-        sprintf ( buf, "[%s, %s, %s]", stamp.getToStringReadable().c_str(), pid[LEFT].getToString().c_str(), pid[RIGHT].getToString().c_str());
+        sprintf ( buf, "[%s, %s]", stamp.getToStringReadable().c_str(), getToString().c_str());
         return std::string ( buf );
     }
 #endif

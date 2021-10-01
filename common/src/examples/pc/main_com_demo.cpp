@@ -25,8 +25,10 @@ struct Parameters {
     float axis_displacement;
 };
 
+using namespace car::com::objects;
 car::com::pc::SerialInterface serial_arduino;
-car::com::objects::AckermannState ackermann_command;
+AckermannState ackermann_command;
+ControlParameter control_parameter;
 
 int main ( int argc, char* argv[] )
 {
@@ -62,17 +64,21 @@ int main ( int argc, char* argv[] )
     std::signal ( SIGINT, signal_handler );
 
     /// send command
-    car::com::objects::AckermannConfig ackermann_config(params.wheel_diameter, params.wheel_displacement, params.axis_displacement );
-    ackermann_command.set( params.rps, params.rps, params.steering, car::com::objects::AckermannState::MODE_VELOCITY );
+    AckermannConfig ackermann_config(params.wheel_diameter, params.wheel_displacement, params.axis_displacement );
+    ackermann_command.set( params.rps, params.rps, params.steering, AckermannState::MODE_VELOCITY );
 
     auto  callback_fnc ( std::bind ( &callback, std::placeholders::_1,  std::placeholders::_2 ) );
     serial_arduino.init ( params.serial, callback_fnc );
     sleep ( 1 );
     {
 
-        serial_arduino.addObject ( car::com::objects::Object (ackermann_config, car::com::objects::TYPE_ACKERMANN_CONFIG ) );
-        serial_arduino.addObject ( car::com::objects::Object( ackermann_command, car::com::objects::TYPE_ACKERMANN_CMD ) );
-
+        serial_arduino.addObject ( Object (ackermann_config, TYPE_ACKERMANN_CONFIG ) );
+        serial_arduino.addObject ( Object( ackermann_command, TYPE_ACKERMANN_CMD ) );
+    }
+    sleep(1);
+    {
+        control_parameter = ControlParameter::get_default(ControlParameter::MXR02);
+        serial_arduino.addObject ( Object( control_parameter, TYPE_CONTROL_PARAMETER ) );
     }
     while ( gSignalStatus == 0 ) {
         sleep ( 1 );
@@ -81,7 +87,7 @@ int main ( int argc, char* argv[] )
     {
         /// stop motors
         ackermann_command.set(0, 0, 0, ackermann_command.MODE_PWM, false );
-        car::com::objects::Object o ( ackermann_command, car::com::objects::TYPE_ACKERMANN_CMD );
+        Object o ( ackermann_command, TYPE_ACKERMANN_CMD );
         serial_arduino.addObject ( o );
     }
     std::cout << "good-bye!" << std::endl;

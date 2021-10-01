@@ -52,6 +52,7 @@ static const uint16_t TYPE_RAW_COMMAND = 6010;
 static const uint16_t TYPE_STATE_ACKERMANN = 6020;
 static const uint16_t TYPE_COMMAND_ACKERMANN = 6030;
 static const uint16_t TYPE_CONFIG_ACKERMANN = 6040;
+static const uint16_t TYPE_CONTROL_PARAMETER = 6050;
 static const uint16_t TYPE_ARRAY16SC1 = 6101;
 static const uint16_t TYPE_ARRAY16SC4 = 6104;
 static const uint16_t TYPE_ARRAY16SC8 = 6108;
