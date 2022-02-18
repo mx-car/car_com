@@ -26,7 +26,7 @@ public:
         set(_wheel_diameter, _wheel_displacement, _wheel_axle_displacement, now);
     }
     void set(float _wheel_diameter, float _wheel_displacement, float _wheel_axle_displacement, bool now = true){
-        wheel_diameter = _wheel_diameter, wheel_displacement = _wheel_displacement, wheel_axle_displacement = wheel_axle_displacement;
+        wheel_diameter = _wheel_diameter, wheel_displacement = _wheel_displacement, wheel_axle_displacement = _wheel_axle_displacement;
         if(now) stamp = Time::now();
     }
     
@@ -60,9 +60,9 @@ public:
     }
 #endif
 };
-};
-};
-};
+}
+}
+}
 
 
 #endif // CAR_COM_OBJECTS_ACKERMANNCONFIG_H

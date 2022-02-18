@@ -33,7 +33,7 @@ public:
         set(forward_velocity, steering_angle, command_units, now);
     }
     void set(float forward_velocity, float steering_angle, bool inhibitor = false, Units command_units = UNIT_DIRECT, bool now = true) {
-        forward = forward_velocity, steering = steering_angle, this->inhibitor = inhibitor;
+        forward = forward_velocity, steering = steering_angle, this->inhibitor = inhibitor, units = command_units;
         if(now) stamp = Time::now();
     }
     Time stamp;
@@ -68,9 +68,9 @@ public:
     }
 #endif
 };
-};
-};
-};
+}
+}
+}
 
 
 #endif // CAR_COM_OBJECTS_COMMANDACKERMANN_H

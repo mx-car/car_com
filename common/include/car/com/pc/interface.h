@@ -47,8 +47,8 @@ public:
     void addObject(const car::com::objects::Object &object);
 };
 
-};
-};
-};
+}
+}
+}
 
 #endif // CAR_COM_INTERFACE_INTERFACE_H

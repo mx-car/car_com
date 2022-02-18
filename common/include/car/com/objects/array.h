@@ -49,8 +49,8 @@ typedef Array<float, 8> Array16FC8;
 typedef Array<int16_t, 1> Array16SC1;
 typedef Array<int16_t, 4> Array16SC4;
 typedef Array<int16_t, 8> Array16SC8;
-};
-};
-};
+}
+}
+}
 
 #endif // CAR_COM_OBJECTS_ARRAY_H

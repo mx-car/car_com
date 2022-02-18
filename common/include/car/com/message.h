@@ -60,7 +60,7 @@ public:
 };
 
 
-};
-};
+}
+}
 
 #endif // CAR_COM_MESSAGE_H

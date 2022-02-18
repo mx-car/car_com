@@ -57,6 +57,9 @@ public:
     float Kp;
     float Ki;
     float Kd;
+    void set(float dt, float min, float max, float Kp, float Ki, float Kd){
+        this->dt = dt, this->min = min, this->max = max, this->Kp = Kp, this->Ki = Ki, this->Kd = Kd;
+    };
     bool operator==( const PIDParameter &o ) const { 
         return o.dt == dt && o.min == min && o.max == max && o.min == min && o.Kp == Kp && o.Ki == Ki && o.Kd == Kd ; 
     }
@@ -98,19 +101,19 @@ public:
             case MXR01:
                 break;
             case MXR02:
-                config.bldc[LEFT]  = BLDCParameter(-65     , -65 - 90, 11);
-                config.bldc[RIGHT] = BLDCParameter(-80 + 90,      -80, 11);
+                config.bldc[LEFT].set(-65     , -65 - 90, 11);
+                config.bldc[RIGHT].set(-80 + 90,      -80, 11);
                 
-                config.pid[LEFT] = PIDParameter(0.1, -1, 1, 0.2, 0.05, 0.01);
-                config.pid[RIGHT] = PIDParameter(0.1, -1, 1, 0.2, 0.05, 0.01);
+                config.pid[LEFT].set(0.1, -1, 1, 0.2, 0.05, 0.01);
+                config.pid[RIGHT].set(0.1, -1, 1, 0.2, 0.05, 0.01);
                 break;
             case NA:
             default:
-                config.bldc[LEFT]  = BLDCParameter( 0  , -90, 11);
-                config.bldc[RIGHT] = BLDCParameter( +90,   0, 11);
+                config.bldc[LEFT].set( 0  , -90, 11);
+                config.bldc[RIGHT].set( +90,   0, 11);
                 
-                config.pid[LEFT] = PIDParameter(0.1, -1, 1, 0.2, 0.05, 0.01);
-                config.pid[RIGHT] = PIDParameter(0.1, -1, 1, 0.2, 0.05, 0.01);
+                config.pid[LEFT].set(0.1, -1, 1, 0.2, 0.05, 0.01);
+                config.pid[RIGHT].set(0.1, -1, 1, 0.2, 0.05, 0.01);
                 
         }
         return config;
@@ -139,9 +142,9 @@ public:
     }
 #endif
 };
-};
-};
-};
+}
+}
+}
 
 
 #endif // CAR_COM_OBJECTS_CONTROLPARAMETER_H

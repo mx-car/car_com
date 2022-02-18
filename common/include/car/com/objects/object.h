@@ -109,9 +109,8 @@ protected:
     void dealloc();
     void copy_buffer_from ( const char *src );
 };
-
-};
-};
-};
+}
+}
+}
 
 #endif // CAR_COM_OBJECTS_OBJECT_H

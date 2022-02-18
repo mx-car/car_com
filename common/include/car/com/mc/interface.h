@@ -30,8 +30,8 @@ private:
     uint8_t serialbuffer[MAX_BUFFER_SIZE];
     uint16_t serialbuffer_used;
 };
-};
-};
-};
+}
+}
+}
 #endif //CAR_COM_MC_INTERFACE_H
 

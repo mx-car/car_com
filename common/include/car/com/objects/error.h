@@ -51,8 +51,8 @@ public:
     }
 #endif
 };
-};
-};
-};
+}
+}
+}
 
 #endif // CAR_COM_OBJECTS_ERROR_H

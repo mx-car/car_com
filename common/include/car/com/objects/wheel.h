@@ -108,9 +108,9 @@ public:
 #endif
 };
 
-};
-};
-};
+}
+}
+}
 
 
 #endif // CAR_COM_OBJECTS_WHEEL_H

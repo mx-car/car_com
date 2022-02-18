@@ -48,9 +48,9 @@ public:
     }
 #endif
 };
-};
-};
-};
+}
+}
+}
 
 
 #endif // CAR_COM_OBJECTS_ACKERMANNSTATE_H
