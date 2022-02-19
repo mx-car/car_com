@@ -10,7 +10,7 @@ cd carcom/build
 
 # you can install the lib into your home folder 
 # but you have to set an enviroment varible CarCom_DIR afterwards
-export CARCOM_INSTALL_PREFIX=/opt/carcom
+export CARCOM_INSTALL_PREFIX=/opt/mxr
 cmake -DCMAKE_INSTALL_PREFIX=$CARCOM_INSTALL_PREFIX ..
 
 make
@@ -21,7 +21,7 @@ sudo sh -c "echo $CARCOM_INSTALL_PREFIX/lib > /etc/ld.so.conf.d/carcom.conf"
 sudo ldconfig
 
 # make cmake config avaliable
-echo "export CarCom_DIR=$CARCOM_INSTALL_PREFIX/lib/CMake/CarCom" >> ~/.bashrc
+echo "export CarCom_DIR=$CARCOM_INSTALL_PREFIX/lib/CMake" >> ~/.bashrc
 ```
 
 ## Demo
