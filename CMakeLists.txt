@@ -52,7 +52,7 @@ set(CONF_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}" "${PROJECT_BINARY_DIR}")
 configure_file(CarComConfig.cmake.in
   "${PROJECT_BINARY_DIR}/CarComConfig.cmake" @ONLY)
 # ... for the install tree
-set(CONF_INCLUDE_DIRS "\${CARCOM_CMAKE_DIR}/${REL_INCLUDE_DIR}")
+set(CONF_INCLUDE_DIRS "${INSTALL_INCLUDE_DIR}")
 configure_file(CarComConfig.cmake.in
   "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CarComConfig.cmake" @ONLY)
 # ... for both
