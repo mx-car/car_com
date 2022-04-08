@@ -80,10 +80,31 @@ public:
 
     static const int LEFT = 0;
     static const int RIGHT = 1;
+    static const char* side_name(int i){
+        switch(i){
+            case LEFT:
+                return "left";
+            case RIGHT:
+                return "right";
+            default:
+                return "na";
+        }
+    }
     enum Vehicle { 
         NA = 0, 
         MXR01 = 1, 
         MXR02 = 2};
+    static const char* vehicle_name(Vehicle i){
+        switch(i){
+            case MXR01:
+                return "mxr01";
+            case MXR02:
+                return "mxr02";
+            case NA:
+            default:
+                return "na";
+        }
+    }
 
     ControlParameter()
         : stamp() 
