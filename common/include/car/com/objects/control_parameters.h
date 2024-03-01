@@ -108,8 +108,8 @@ public:
 
     ControlParameter()
         : stamp() 
-        , bldc({BLDCParameter(), BLDCParameter()})
-        , pid({PIDParameter(), PIDParameter()}){
+        , bldc{BLDCParameter(), BLDCParameter()}
+        , pid{PIDParameter(), PIDParameter()} {
     };
 
     Time stamp;
